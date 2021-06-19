@@ -1,0 +1,34 @@
+#TransHeader{
+    -fx-background-color:  #9a9a9a;
+}
+
+#TransHeader .label{
+    -fx-font-family: "Cambria";
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; 
+    -fx-background-color: transparent;
+}
+
+
+.label, .button, .textfield{
+    -fx-font-family: "Cambria";
+}
+
+#btn01, #btn02, #btn03, #btn04, #btn05, #btn06, #btn07, #btn08, #btn09, #btn10, #btn11, #btn12{
+    -fx-border-width: 0px 0px 0px 1px;
+    -fx-border-radius: 0px;
+    -fx-border-color: #E9E9E9;
+    -fx-background-radius: 0px;
+    -fx-background-color: #cdcdcd;
+    -fx-text-fill: #000000;    
+}
+
+#btn01:hover, #btn02:hover, #btn03:hover, #btn04:hover, #btn05:hover, #btn06:hover,
+#btn07:hover, #btn08:hover, #btn09:hover, #btn10:hover, #btn11:hover, #btn12:hover{
+    -fx-background-color: #9a9a9a;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: hand;
+}
+
+
+
