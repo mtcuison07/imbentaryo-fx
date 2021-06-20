@@ -13,12 +13,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
+import org.xersys.imbentaryo.gui.handler.ScreenInfo;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
 import org.xersys.imbentaryo.listener.PartsCatalogueListener;
 import org.xurpas.kumander.base.Nautilus;
+import org.xurpas.kumander.util.CommonUtil;
 
 public class PartsCatalogueController implements Initializable, ControlledScreen{
     @FXML
@@ -51,6 +55,12 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     private ScrollPane scroll;
     @FXML
     private GridPane grid;
+    @FXML
+    private VBox btnbox00;
+    @FXML
+    private HBox btnbox01;
+    @FXML
+    private HBox btnbox02;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -61,13 +71,16 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         AnchorMain.setRightAnchor(AnchorMain, 0.0);
         
         //keyboard events
-        AnchorMain.setOnKeyPressed(this::keyPressed);
         AnchorMain.setOnKeyReleased(this::keyReleased);
         
         //initialize buttons
         initButton();
         //initialize grid
         initGrid();
+        
+        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.CART);
+                
+        if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
         
         displayImages();
     }    
@@ -85,6 +98,11 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     @Override
     public void setScreensController(ScreensController foValue) {
         _screens_controller = foValue;
+    }
+    
+    @Override
+    public void setDashboardScreensController(ScreensController foValue) {
+        _screens_dashboard_controller = foValue;
     }
     
     private void initButton(){
@@ -114,6 +132,17 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         btn10.setOnAction(this::cmdButton_Click);
         btn11.setOnAction(this::cmdButton_Click);
         btn12.setOnAction(this::cmdButton_Click);
+        
+        if (btn06.getText().isEmpty()){
+            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
+            btnbox00.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.getChildren().clear();
+            btnbox02.setPrefHeight(0);
+        }
+        
+        //adjust the width of dashboard/cart pane
+        _main_screen_controller.AnchorPaneMonitor.setPrefWidth(440.00);
     }
     
     private void cmdButton_Click(ActionEvent event) {
@@ -124,6 +153,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         
         switch (lsButton){
             case "btn01": //exit window
+                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
                 _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
                 break;
             case "btn02":
@@ -145,6 +175,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         
         switch(event.getCode()){
             case F1:
+                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
                 _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
                 break;
             case F2:
@@ -158,37 +189,6 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
             case F10:
             case F11:
             case F12:
-            case ESCAPE:
-                break; 
-            case CONTROL:
-                _control_pressed = false;
-                break;
-            case SHIFT:
-                _shift_pressed = false;
-                break;
-            case TAB:
-                _control_pressed = false;
-                _shift_pressed = false;
-                break;
-        }
-    }
-    
-    private void keyPressed(KeyEvent event) {
-        switch(event.getCode()){
-            case CONTROL:
-                _control_pressed = true;
-                break; 
-            case SHIFT:
-                _shift_pressed = true;
-                break;
-            case TAB:
-                if (_control_pressed){
-                    if (_shift_pressed)
-                        _screens_controller.prevScreen();
-                    else
-                        _screens_controller.fwrdScreen();
-                }
-                break;
         }
     }
     
@@ -210,6 +210,10 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
             public void onClickListener() {
                 PartsCatalogueDetailController instance = new PartsCatalogueDetailController();
                 instance.setData();
+                instance.setNautilus(_nautilus);
+                instance.setParentController(_main_screen_controller);
+                instance.setScreensController(_screens_controller);
+                instance.setDashboardScreensController(_screens_dashboard_controller);
                 
                 _screens_controller.loadScreen("../PartsCatalogueDetail.fxml", (ControlledScreen) instance);
                 
@@ -257,6 +261,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     private Nautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
+    private ScreensController _screens_dashboard_controller;
     private PartsCatalogueListener _listener;
     
     private boolean _control_pressed;

@@ -27,7 +27,6 @@ public class ScreensController{
     private AnchorPane _anchor; //the parent anchorpane
     private MainScreenController _controller;
     
-    
     public ScreensController() {
         super();
     }
@@ -79,10 +78,6 @@ public class ScreensController{
             FXMLLoader myLoader = new FXMLLoader();
             
             myLoader.setLocation(getClass().getResource(resource));
-            
-            controller.setParentController(_controller);
-            controller.setScreensController(this);
-            
             myLoader.setController(controller);
               
             Parent loadScreen = (Parent) myLoader.load();

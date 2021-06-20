@@ -5,13 +5,19 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
+import org.xersys.imbentaryo.gui.handler.ScreenInfo;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
+import org.xersys.imbentaryo.listener.PartsCatalogueListener;
 import org.xurpas.kumander.base.Nautilus;
+import org.xurpas.kumander.util.CommonUtil;
 
 public class PartsInquiryController implements Initializable, ControlledScreen{
     @FXML
@@ -40,6 +46,12 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
     private Button btn11;
     @FXML
     private Button btn12;
+    @FXML
+    private VBox btnbox00;
+    @FXML
+    private HBox btnbox01;
+    @FXML
+    private HBox btnbox02;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //set the main anchor pane fit the size of its parent anchor pane
@@ -49,11 +61,14 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
         AnchorMain.setRightAnchor(AnchorMain, 0.0);
         
         //keyboard events
-        AnchorMain.setOnKeyPressed(this::keyPressed);
         AnchorMain.setOnKeyReleased(this::keyReleased);
         
         //initialize buttons
         initButton();
+        
+        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.CART);
+                
+        if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
     }    
 
     @Override
@@ -71,10 +86,15 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
         _screens_controller = foValue;
     }
     
+    @Override
+    public void setDashboardScreensController(ScreensController foValue) {
+        _screens_dashboard_controller = foValue;
+    }
+    
     private void initButton(){
         btn01.setText("F1 - Send To CO");
         btn02.setText("F2 - Send To SO");
-        btn03.setText("F3 - Close");
+        btn03.setText("F3 - Exit Window");
         btn04.setText("");
         btn05.setText("");
         btn06.setText("");
@@ -98,6 +118,14 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
         btn10.setOnAction(this::cmdButton_Click);
         btn11.setOnAction(this::cmdButton_Click);
         btn12.setOnAction(this::cmdButton_Click);
+        
+        if (btn06.getText().isEmpty()){
+            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
+            btnbox00.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.getChildren().clear();
+            btnbox02.setPrefHeight(0);
+        }
     }
     
     private void cmdButton_Click(ActionEvent event) {
@@ -114,7 +142,8 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
                 System.out.println("Send to sales order");
                 break;
             case "btn03": //close
-                System.exit(0);
+                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
+                _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
                 break;
             case "btn04":
             case "btn05":
@@ -139,7 +168,8 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
                 System.out.println("Send to sales order");
                 break;
             case F3:
-                System.exit(0);
+                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
+                _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
                 break;
             case F4:
             case F5:
@@ -150,44 +180,17 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
             case F10:
             case F11:
             case F12:
-            case ESCAPE:
-                break; 
-            case CONTROL:
-                _control_pressed = false;
-                break;
-            case SHIFT:
-                _shift_pressed = false;
-                break;
-            case TAB:
-                _control_pressed = false;
-                _shift_pressed = false;
-                break;
         }
     }
     
-    public void keyPressed(KeyEvent event) {
-        switch(event.getCode()){
-            case CONTROL:
-                _control_pressed = true;
-                break; 
-            case SHIFT:
-                _shift_pressed = true;
-                break;
-            case TAB:
-                if (_control_pressed){
-                    if (_shift_pressed)
-                        _screens_controller.prevScreen();
-                    else
-                        _screens_controller.fwrdScreen();
-                }
-                break;
-        }
-    }
+    private Nautilus _nautilus;
+    private MainScreenController _main_screen_controller;
+    private ScreensController _screens_controller;
+    private ScreensController _screens_dashboard_controller;
+    private PartsCatalogueListener _listener;
     
-    Nautilus _nautilus;
-    MainScreenController _main_screen_controller;
-    ScreensController _screens_controller;
+    private boolean _control_pressed;
+    private boolean _shift_pressed;
     
-    boolean _control_pressed;
-    boolean _shift_pressed;
+    private int _max_grid_column;
 }

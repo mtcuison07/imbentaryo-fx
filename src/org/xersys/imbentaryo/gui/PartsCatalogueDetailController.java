@@ -5,16 +5,18 @@
  */
 package org.xersys.imbentaryo.gui;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
@@ -55,6 +57,12 @@ public class PartsCatalogueDetailController implements Initializable, Controlled
     private Button btn12;
     @FXML
     private ImageView image;
+    @FXML
+    private VBox btnbox00;
+    @FXML
+    private HBox btnbox01;
+    @FXML
+    private HBox btnbox02;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -85,6 +93,11 @@ public class PartsCatalogueDetailController implements Initializable, Controlled
     @Override
     public void setScreensController(ScreensController foValue) {
         _screens_controller = foValue;
+    }
+    
+    @Override
+    public void setDashboardScreensController(ScreensController foValue) {
+        _screens_dashboard_controller = foValue;
     }
     
     public void setData(){
@@ -118,6 +131,14 @@ public class PartsCatalogueDetailController implements Initializable, Controlled
         btn10.setOnAction(this::cmdButton_Click);
         btn11.setOnAction(this::cmdButton_Click);
         btn12.setOnAction(this::cmdButton_Click);
+        
+        if (btn06.getText().isEmpty()){
+            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
+            btnbox00.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.getChildren().clear();
+            btnbox02.setPrefHeight(0);
+        }
     }
     
     private void cmdButton_Click(ActionEvent event) {
@@ -194,7 +215,10 @@ public class PartsCatalogueDetailController implements Initializable, Controlled
     private Nautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
+    ScreensController _screens_dashboard_controller;
     
     private boolean _control_pressed;
     private boolean _shift_pressed;    
+
+    
 }

@@ -37,7 +37,14 @@ public class DashboardController implements Initializable, ControlledScreen {
         _screens_controller = foValue;
     }
     
+    @Override
+    public void setDashboardScreensController(ScreensController foValue) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     Nautilus _nautilus;
     MainScreenController _main_screen_controller;
     ScreensController _screens_controller;
+
+    
 }

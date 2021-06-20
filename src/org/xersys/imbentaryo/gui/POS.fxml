@@ -12,20 +12,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="JobOrder" fx:id="AnchorMain" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChildTransaction.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="POS" fx:id="AnchorMain" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/ChildTransaction.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
-               <top>
-                  <AnchorPane id="TransHeader" prefHeight="30.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" text="Job Order" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-               </top>
                <bottom>
-                  <VBox fx:id="btnbox00" prefHeight="80.0" prefWidth="100.0" spacing="1.0" BorderPane.alignment="CENTER">
+                  <VBox fx:id="btnbox00" prefHeight="80.0" prefWidth="100.0" spacing="1.0">
                      <children>
                         <HBox fx:id="btnbox01" prefHeight="100.0" prefWidth="200.0">
                            <children>
@@ -133,9 +126,9 @@
                                  </children>
                               </GridPane>
                            </children>
-                           <padding>
-                              <Insets bottom="1.0" />
-                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </HBox>
                      </children>
                      <BorderPane.margin>
@@ -143,6 +136,13 @@
                      </BorderPane.margin>
                   </VBox>
                </bottom>
+               <top>
+                  <AnchorPane id="TransHeader" prefHeight="30.0">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Point-of-Sales" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+               </top>
             </BorderPane>
          </children>
       </StackPane>
