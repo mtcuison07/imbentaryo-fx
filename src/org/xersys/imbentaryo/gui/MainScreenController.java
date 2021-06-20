@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
+import org.xurpas.kumander.base.Nautilus;
 import org.xurpas.kumander.util.CommonUtil;
 
 public class MainScreenController implements Initializable {
@@ -23,7 +24,7 @@ public class MainScreenController implements Initializable {
     @FXML
     private AnchorPane AnchorPaneFooter;
     @FXML
-    private AnchorPane AnchorPaneMonitor;
+    public AnchorPane AnchorPaneMonitor;
     @FXML
     public AnchorPane AnchorPaneBody;
     @FXML
@@ -53,16 +54,30 @@ public class MainScreenController implements Initializable {
         //load the first screen based on the user credential
         //or screen to load will be based on the system configudation
         //load Job Order form temporarilly
-        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.JOB_ORDER);
-                
-        if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));  
+        loadScreen(ScreenInfo.NAME.POS);
         
-        loJSON = ScreenInfo.get(ScreenInfo.NAME.DASHBOARD);
+        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.DASHBOARD);
                 
         //load the dashboard
         if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));  
     }    
     
+    private void loadScreen(ScreenInfo.NAME  foValue){
+        JSONObject loJSON = ScreenInfo.get(foValue);
+        ControlledScreen instance;
+        
+        if (loJSON != null){
+            instance = (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller"));
+            instance.setNautilus(_nautilus);
+            instance.setParentController(this);
+            instance.setScreensController(_screens_controller);
+            instance.setDashboardScreensController(_screens_dashboard_controller);
+            
+            _screens_controller.loadScreen((String) loJSON.get("resource"), instance);
+        }
+    }
+    
+    private static Nautilus _nautilus;
     private static ScreensController _screens_controller;
     private static ScreensController _screens_dashboard_controller;
 }

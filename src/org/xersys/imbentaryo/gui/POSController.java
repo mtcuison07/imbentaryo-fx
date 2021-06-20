@@ -5,9 +5,12 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreenInfo;
@@ -15,7 +18,7 @@ import org.xersys.imbentaryo.gui.handler.ScreensController;
 import org.xurpas.kumander.base.Nautilus;
 import org.xurpas.kumander.util.CommonUtil;
 
-public class SalesOrderController implements Initializable, ControlledScreen{
+public class POSController implements Initializable, ControlledScreen{
     @FXML
     private AnchorPane AnchorMain;
     @FXML
@@ -42,6 +45,12 @@ public class SalesOrderController implements Initializable, ControlledScreen{
     private Button btn11;
     @FXML
     private Button btn12;
+    @FXML
+    private VBox btnbox00;
+    @FXML
+    private HBox btnbox01;
+    @FXML
+    private HBox btnbox02;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -74,13 +83,18 @@ public class SalesOrderController implements Initializable, ControlledScreen{
         _screens_controller = foValue;
     }
     
+    @Override
+    public void setDashboardScreensController(ScreensController foValue) {
+        _screens_dashboard_controller = foValue;
+    }
+    
     private void initButton(){
         btn01.setText("F1 - Confirm Order");
         btn02.setText("F2 - New Order");
         btn03.setText("F3 - Customer Order");
         btn04.setText("F4 - Job Order");
         btn05.setText("F5 - Parts Catalogue");
-        btn06.setText("F6 - Parts Inquiy");
+        btn06.setText("F6 - Parts Inquiry");
         btn07.setText("F7 - Reports");
         btn08.setText("F8 - Close");
         btn09.setText("");
@@ -101,6 +115,14 @@ public class SalesOrderController implements Initializable, ControlledScreen{
         btn10.setOnAction(this::cmdButton_Click);
         btn11.setOnAction(this::cmdButton_Click);
         btn12.setOnAction(this::cmdButton_Click);
+        
+        if (btn06.getText().isEmpty()){
+            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
+            btnbox00.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.setPadding(new Insets(0, 0, 0, 0));
+            btnbox02.getChildren().clear();
+            btnbox02.setPrefHeight(0);
+        }
     }
     
     private void cmdButton_Click(ActionEvent event) {
@@ -117,24 +139,16 @@ public class SalesOrderController implements Initializable, ControlledScreen{
                 System.out.println("Add new transaction.");
                 break;
             case "btn03": //customer order
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.CUSTOMER_ORDER);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
                 break;
             case "btn04":
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.JOB_ORDER);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.JOB_ORDER);
                 break;
             case "btn05":
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.PARTS_CATALOGUE);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
                 break;
             case "btn06":
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.PARTS_INQUIRY);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));  
+                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
                 break;
             case "btn07": //reports
                 break;
@@ -145,6 +159,21 @@ public class SalesOrderController implements Initializable, ControlledScreen{
             case "btn10":
             case "btn11":
             case "btn12":
+        }
+    }
+    
+    private void loadScreen(ScreenInfo.NAME  foValue){
+        JSONObject loJSON = ScreenInfo.get(foValue);
+        ControlledScreen instance;
+        
+        if (loJSON != null){
+            instance = (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller"));
+            instance.setNautilus(_nautilus);
+            instance.setParentController(_main_screen_controller);
+            instance.setScreensController(_screens_controller);
+            instance.setDashboardScreensController(_screens_dashboard_controller);
+            
+            _screens_controller.loadScreen((String) loJSON.get("resource"), instance);
         }
     }
     
@@ -159,24 +188,16 @@ public class SalesOrderController implements Initializable, ControlledScreen{
                 System.out.println("Add new transaction.");
                 break;
             case F3:
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.CUSTOMER_ORDER);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
                 break;
             case F4:
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.JOB_ORDER);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.JOB_ORDER);
                 break;
             case F5:
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.PARTS_CATALOGUE);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
                 break;
             case F6:
-                loJSON = ScreenInfo.get(ScreenInfo.NAME.PARTS_INQUIRY);
-                
-                if (loJSON != null) _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller"))); 
+                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
                 break;
             case F7:
                 break;
@@ -221,10 +242,11 @@ public class SalesOrderController implements Initializable, ControlledScreen{
         }
     }
     
-    Nautilus _nautilus;
-    MainScreenController _main_screen_controller;
-    ScreensController _screens_controller;
+    private Nautilus _nautilus;
+    private MainScreenController _main_screen_controller;
+    private ScreensController _screens_controller;
+    private ScreensController _screens_dashboard_controller;
     
-    boolean _control_pressed;
-    boolean _shift_pressed;
+    private boolean _control_pressed;
+    private boolean _shift_pressed;
 }

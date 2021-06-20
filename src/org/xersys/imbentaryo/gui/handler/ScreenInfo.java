@@ -10,9 +10,10 @@ public class ScreenInfo {
         JOB_ORDER,
         PARTS_INQUIRY,
         PARTS_CATALOGUE,
-        SALES_ORDER,
+        POS,
         CUSTOMER_ORDER,
-        DASHBOARD
+        DASHBOARD,
+        CART
     }
     
     public static JSONObject get(NAME foModule){
@@ -31,9 +32,9 @@ public class ScreenInfo {
                 loJSON.put("resource", RESOURCE_URL + "PartsCatalogue.fxml");
                 loJSON.put("controller", CONTROLLER_URL + "PartsCatalogueController");
                 return loJSON;
-            case SALES_ORDER:
-                loJSON.put("resource", RESOURCE_URL + "SalesOrder.fxml");
-                loJSON.put("controller", CONTROLLER_URL + "SalesOrderController");
+            case POS:
+                loJSON.put("resource", RESOURCE_URL + "POS.fxml");
+                loJSON.put("controller", CONTROLLER_URL + "POSController");
                 return loJSON;
             case CUSTOMER_ORDER:
                 loJSON.put("resource", RESOURCE_URL + "CustomerOrder.fxml");
@@ -42,6 +43,10 @@ public class ScreenInfo {
             case DASHBOARD:
                 loJSON.put("resource", RESOURCE_URL + "Dashboard.fxml");
                 loJSON.put("controller", CONTROLLER_URL + "DashboardController");
+                return loJSON;
+            case CART:
+                loJSON.put("resource", RESOURCE_URL + "Cart.fxml");
+                loJSON.put("controller", CONTROLLER_URL + "CartController");
                 return loJSON;
         }
         
