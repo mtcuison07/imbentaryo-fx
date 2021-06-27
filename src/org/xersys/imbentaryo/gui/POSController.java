@@ -2,55 +2,20 @@ package org.xersys.imbentaryo.gui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreenInfo;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
-import org.xurpas.kumander.base.Nautilus;
-import org.xurpas.kumander.util.CommonUtil;
+import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.util.CommonUtil;
 
 public class POSController implements Initializable, ControlledScreen{
     @FXML
     private AnchorPane AnchorMain;
-    @FXML
-    private Button btn01;
-    @FXML
-    private Button btn02;
-    @FXML
-    private Button btn03;
-    @FXML
-    private Button btn04;
-    @FXML
-    private Button btn05;
-    @FXML
-    private Button btn06;
-    @FXML
-    private Button btn07;
-    @FXML
-    private Button btn08;
-    @FXML
-    private Button btn09;
-    @FXML
-    private Button btn10;
-    @FXML
-    private Button btn11;
-    @FXML
-    private Button btn12;
-    @FXML
-    private VBox btnbox00;
-    @FXML
-    private HBox btnbox01;
-    @FXML
-    private HBox btnbox02;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -64,8 +29,6 @@ public class POSController implements Initializable, ControlledScreen{
         AnchorMain.setOnKeyPressed(this::keyPressed);
         AnchorMain.setOnKeyReleased(this::keyReleased);
         
-        //initialize buttons
-        initButton();
     }    
 
     @Override
@@ -86,80 +49,6 @@ public class POSController implements Initializable, ControlledScreen{
     @Override
     public void setDashboardScreensController(ScreensController foValue) {
         _screens_dashboard_controller = foValue;
-    }
-    
-    private void initButton(){
-        btn01.setText("F1 - Confirm Order");
-        btn02.setText("F2 - New Order");
-        btn03.setText("F3 - Customer Order");
-        btn04.setText("F4 - Job Order");
-        btn05.setText("F5 - Parts Catalogue");
-        btn06.setText("F6 - Parts Inquiry");
-        btn07.setText("F7 - Reports");
-        btn08.setText("F8 - Close");
-        btn09.setText("");
-        btn10.setText("");
-        btn11.setText("");
-        btn12.setText("");
-        
-        //Set action event handler for the buttons
-        btn01.setOnAction(this::cmdButton_Click);
-        btn02.setOnAction(this::cmdButton_Click);
-        btn03.setOnAction(this::cmdButton_Click);
-        btn04.setOnAction(this::cmdButton_Click);
-        btn05.setOnAction(this::cmdButton_Click);
-        btn06.setOnAction(this::cmdButton_Click);
-        btn07.setOnAction(this::cmdButton_Click);
-        btn08.setOnAction(this::cmdButton_Click);
-        btn09.setOnAction(this::cmdButton_Click);
-        btn10.setOnAction(this::cmdButton_Click);
-        btn11.setOnAction(this::cmdButton_Click);
-        btn12.setOnAction(this::cmdButton_Click);
-        
-        if (btn06.getText().isEmpty()){
-            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
-            btnbox00.setPadding(new Insets(0, 0, 0, 0));
-            btnbox02.setPadding(new Insets(0, 0, 0, 0));
-            btnbox02.getChildren().clear();
-            btnbox02.setPrefHeight(0);
-        }
-    }
-    
-    private void cmdButton_Click(ActionEvent event) {
-        String lsButton = ((Button) event.getSource()).getId();
-        System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
-        
-        JSONObject loJSON;
-        
-        switch (lsButton){
-            case "btn01": //confirm order
-                System.out.println("Confirm transaction.");
-                break;
-            case "btn02": //new order
-                System.out.println("Add new transaction.");
-                break;
-            case "btn03": //customer order
-                loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
-                break;
-            case "btn04":
-                loadScreen(ScreenInfo.NAME.JOB_ORDER);
-                break;
-            case "btn05":
-                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
-                break;
-            case "btn06":
-                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
-                break;
-            case "btn07": //reports
-                break;
-            case "btn08": //close
-                System.exit(0);
-                break;
-            case "btn09":
-            case "btn10":
-            case "btn11":
-            case "btn12":
-        }
     }
     
     private void loadScreen(ScreenInfo.NAME  foValue){

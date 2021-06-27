@@ -15,7 +15,7 @@
 }
 
 #btn01, #btn02, #btn03, #btn04, #btn05, #btn06, #btn07, #btn08, #btn09, #btn10, #btn11, #btn12{
-    -fx-border-width: 0px 0px 0px 1px;
+    -fx-border-width: 0px 0px 0px 0px;
     -fx-border-radius: 0px;
     -fx-border-color: #d2d9e2;
     -fx-background-radius: 0px;
@@ -30,6 +30,7 @@
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
 }
+
 #btnCheckout01, #btnCheckout02, #btnCheckout03{
     -fx-font-family: "Verdana";
     -fx-font-size: 12px;
