@@ -15,7 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xersys.imbentaryo.listener.CartCallback;
 import org.xersys.imbentaryo.listener.CartListener;
-import org.xurpas.kumander.util.StringUtil;
+import org.xersys.kumander.util.StringUtil;
 
 public class CartChildController implements Initializable, CartListener {
     @FXML

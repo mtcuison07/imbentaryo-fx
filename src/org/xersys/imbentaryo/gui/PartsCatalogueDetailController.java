@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
-import org.xurpas.kumander.base.Nautilus;
+import org.xersys.kumander.base.Nautilus;
 
 /**
  * FXML Controller class
