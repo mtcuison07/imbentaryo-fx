@@ -9,6 +9,15 @@
     -fx-background-color: transparent;
 }
 
+#OtherTrans, #TransButtons{
+    -fx-background-color: #c4cdda;
+    
+}
+
+#TransBody{
+    -fx-background-color: #f4f5f7;
+}
+
 
 .label, .button, .textfield{
     -fx-font-family: "Verdana";
