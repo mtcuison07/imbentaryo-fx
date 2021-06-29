@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.xersys.imbentaryo.listener.PartsCatalogueListener;
@@ -20,11 +21,18 @@ public class PartsCatalogueChildController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        image.setImage(new Image(_image_path));
+        
     }    
     
     public void setData(PartsCatalogueListener foValue){
         _listener = foValue;
     }
     
+    public void setImagePath(String fsValue){
+        _image_path = fsValue;
+    }
+    
     PartsCatalogueListener _listener;
+    String _image_path;
 }
