@@ -2,19 +2,21 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="kumander">
-            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/css/MainController.css</file>
-            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/POS.fxml</file>
-            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreen.fxml</file>
-            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreenController.java</file>
-            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/POSController.java</file>
-        </group>
         <group name="FB Raffle">
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/css/MainController.css</file>
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/POSController.java</file>
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreenController.java</file>
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/POS.fxml</file>
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreen.fxml</file>
+        </group>
+        <group name="kumander">
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/PartsCatalogueDetail.fxml</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreenController.java</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/PartsCatalogue.fxml</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/POSController.java</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/PartsCatalogueDetailController.java</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/PartsCatalogueChildController.java</file>
+            <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/PartsCatalogueController.java</file>
         </group>
     </open-files>
 </project-private>

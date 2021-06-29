@@ -23,7 +23,6 @@ import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreensController;
 import org.xersys.imbentaryo.listener.CartCallback;
 import org.xersys.kumander.base.Nautilus;
-import org.xersys.kumander.util.CommonUtil;
 import org.xersys.kumander.util.StringUtil;
 
 public class CartController implements Initializable, ControlledScreen {
@@ -36,12 +35,6 @@ public class CartController implements Initializable, ControlledScreen {
     @FXML
     private HBox HBoxSummary;
     @FXML
-    private Button btnCheckout01;
-    @FXML
-    private Button btnCheckout02;
-    @FXML
-    private Button btnCheckout03;
-    @FXML
     private Label lblTotalItems;
     @FXML
     private Label lblTotalAmount;
@@ -53,10 +46,6 @@ public class CartController implements Initializable, ControlledScreen {
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);
-        
-        btnCheckout01.setTooltip(new Tooltip("Checkout items to Point-of-Sales"));
-        btnCheckout02.setTooltip(new Tooltip("Checkout items to Customer Order"));
-        btnCheckout03.setTooltip(new Tooltip("Checkout items to Job Order"));
         
         displayOrders();
     }       

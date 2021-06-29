@@ -2,9 +2,11 @@ package org.xersys.imbentaryo.gui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
@@ -16,6 +18,10 @@ import org.xersys.kumander.util.CommonUtil;
 public class POSController implements Initializable, ControlledScreen{
     @FXML
     private AnchorPane AnchorMain;
+    @FXML
+    private AnchorPane btnOther01;
+    @FXML
+    private AnchorPane btnOther02;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -23,12 +29,10 @@ public class POSController implements Initializable, ControlledScreen{
         AnchorMain.setTopAnchor(AnchorMain, 0.0);
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
-        AnchorMain.setRightAnchor(AnchorMain, 0.0);
+        AnchorMain.setRightAnchor(AnchorMain, 0.0);   
         
-        //keyboard events
-        AnchorMain.setOnKeyPressed(this::keyPressed);
-        AnchorMain.setOnKeyReleased(this::keyReleased);
-        
+        btnOther01.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther02.setOnMouseClicked(this::cmdMouse_Click);
     }    
 
     @Override
@@ -51,6 +55,25 @@ public class POSController implements Initializable, ControlledScreen{
         _screens_dashboard_controller = foValue;
     }
     
+    private void cmdMouse_Click(MouseEvent event) {
+        String lsButton = ((AnchorPane) event.getSource()).getId();
+        System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
+        
+        switch(lsButton){
+            case "btnOther01": //parts inquiry
+                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
+                break;
+            case "btnOther02": //parts catalogue
+                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
+                break;
+        }
+    }
+    
+    private void cmdButton_Click(ActionEvent event) {
+        String lsButton = ((Button) event.getSource()).getId();
+        System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
+    }
+    
     private void loadScreen(ScreenInfo.NAME  foValue){
         JSONObject loJSON = ScreenInfo.get(foValue);
         ControlledScreen instance;
@@ -66,76 +89,8 @@ public class POSController implements Initializable, ControlledScreen{
         }
     }
     
-    public void keyReleased(KeyEvent event) {
-        JSONObject loJSON;
-        
-        switch(event.getCode()){
-            case F1:
-                System.out.println("Confirm transaction.");
-                break;
-            case F2:
-                System.out.println("Add new transaction.");
-                break;
-            case F3:
-                loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
-                break;
-            case F4:
-                loadScreen(ScreenInfo.NAME.JOB_ORDER);
-                break;
-            case F5:
-                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
-                break;
-            case F6:
-                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
-                break;
-            case F7:
-                break;
-            case F8:
-                System.exit(0);
-                break;
-            case F9:
-            case F10:
-            case F11:
-            case F12:
-            case ESCAPE:
-                break; 
-            case CONTROL:
-                _control_pressed = false;
-                break;
-            case SHIFT:
-                _shift_pressed = false;
-                break;
-            case TAB:
-                _control_pressed = false;
-                _shift_pressed = false;
-                break;
-        }
-    }
-    
-    public void keyPressed(KeyEvent event) {
-        switch(event.getCode()){
-            case CONTROL:
-                _control_pressed = true;
-                break; 
-            case SHIFT:
-                _shift_pressed = true;
-                break;
-            case TAB:
-                if (_control_pressed){
-                    if (_shift_pressed)
-                        _screens_controller.prevScreen();
-                    else
-                        _screens_controller.fwrdScreen();
-                }
-                break;
-        }
-    }
-    
     private Nautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;
-    
-    private boolean _control_pressed;
-    private boolean _shift_pressed;
 }

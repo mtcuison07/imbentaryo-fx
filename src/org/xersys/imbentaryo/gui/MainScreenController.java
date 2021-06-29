@@ -7,9 +7,11 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -109,19 +111,12 @@ public class MainScreenController implements Initializable {
         _screens_dashboard_controller.setParentPane(AnchorPaneMonitor);
         _screens_dashboard_controller.setParentController(this);
         
+        //keyboard events
+        AnchorPaneMain.setOnKeyPressed(this::keyPressed);
+        AnchorPaneMain.setOnKeyReleased(this::keyReleased);
+        
         initButton();
-        
-        //load the first screen based on the user credential
-        //or screen to load will be based on the system configudation
-        //load Job Order form temporarilly
-        loadScreen(ScreenInfo.NAME.POS);
-        
-        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.DASHBOARD);
-                
-        //load the dashboard
-        if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));  
-        
-        
+        initScreen();
     }    
     
     private void loadScreen(ScreenInfo.NAME  foValue){
@@ -137,6 +132,16 @@ public class MainScreenController implements Initializable {
             
             _screens_controller.loadScreen((String) loJSON.get("resource"), instance);
         }
+    }
+    
+    private void initScreen(){
+        //load main form and request focus on its button
+        loadScreen(ScreenInfo.NAME.POS);
+        btn01.requestFocus();
+        
+        //load the dashboard
+        JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.DASHBOARD);
+        if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));          
     }
     
     private void initButton(){
@@ -198,38 +203,113 @@ public class MainScreenController implements Initializable {
         String lsButton = ((Button) event.getSource()).getId();
         System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
         
-        JSONObject loJSON;
-        
         switch (lsButton){
-            case "btn01":
+            case "btn01": //point of sales
+                loadScreen(ScreenInfo.NAME.POS);
                 break;
-            case "btn02":
-                break;
-            case "btn03":
+            case "btn02": //customer order
                 loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
                 break;
-            case "btn04":
+            case "btn03": //job order
                 loadScreen(ScreenInfo.NAME.JOB_ORDER);
                 break;
-            case "btn05":
-                loadScreen(ScreenInfo.NAME.PARTS_CATALOGUE);
+            case "btn04": //purchasing
                 break;
-            case "btn06":
-                loadScreen(ScreenInfo.NAME.PARTS_INQUIRY);
+            case "btn05": //wholesale
                 break;
-            case "btn07":
+            case "btn06": //inventory
                 break;
-            case "btn08":
-                System.exit(0);
+            case "btn07": //warehousing
                 break;
-            case "btn09":
+            case "btn08": //cashflow
+                break;
+            case "btn09": //reports
+                break;
             case "btn10":
             case "btn11":
-            case "btn12":
+                break;
+            case "btn12": //exit
+                System.exit(0);
+        }
+    }
+    
+    public void keyReleased(KeyEvent event) {
+        switch(event.getCode()){
+            case F1: //point of sales
+                loadScreen(ScreenInfo.NAME.POS);
+                break;
+            case F2: //customer order
+                loadScreen(ScreenInfo.NAME.CUSTOMER_ORDER);
+                break;
+            case F3: //job order
+                loadScreen(ScreenInfo.NAME.JOB_ORDER);
+                break;
+            case F4: //purchasing
+                break;
+            case F5: //wholesale
+                break;
+            case F6: //inventory
+                break;
+            case F7: //warehousing
+                break;
+            case F8: //cashflow
+                System.exit(0);
+                break;
+            case F9: //reports
+            case F10:
+            case F11:
+            case F12: //exit                
+                System.exit(0);
+            case ESCAPE:
+                break; 
+            case CONTROL:
+                _control_pressed = false;
+                break;
+            case SHIFT:
+                _shift_pressed = false;
+                break;
+            case TAB:
+                //_control_pressed = false;
+                //_shift_pressed = false;
+                break;
+        }
+    }
+    
+    public void keyPressed(KeyEvent event) {
+        switch(event.getCode()){
+            case CONTROL:
+                _control_pressed = true;
+                break; 
+            case SHIFT:
+                _shift_pressed = true;
+                break;
+            case TAB:
+                Node loNode = _screens_controller.getScreen(_screens_controller.getCurrentScreenIndex());
+                
+                //prevent some window to user prev/fwrd screen
+                switch(loNode.getId()){
+                    case "PartsInquiry":
+                    case "PartsCatalogue":
+                    case "PartsCatalogueDetail":
+                        System.err.println("Request rejected.");
+                        break;
+                    default:
+                        if (_control_pressed){
+                            if (_shift_pressed)
+                                _screens_controller.prevScreen();
+                            else
+                                _screens_controller.fwrdScreen();
+                        }   
+                }
+
+                break;
         }
     }
     
     private static Nautilus _nautilus;
     private static ScreensController _screens_controller;
     private static ScreensController _screens_dashboard_controller;
+    
+    private boolean _control_pressed;
+    private boolean _shift_pressed;
 }

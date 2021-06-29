@@ -10,12 +10,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreenInfo;
@@ -28,39 +27,21 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     @FXML
     private AnchorPane AnchorMain;
     @FXML
-    private Button btn01;
-    @FXML
-    private Button btn02;
-    @FXML
-    private Button btn03;
-    @FXML
-    private Button btn04;
-    @FXML
-    private Button btn05;
-    @FXML
-    private Button btn06;
-    @FXML
-    private Button btn07;
-    @FXML
-    private Button btn08;
-    @FXML
-    private Button btn09;
-    @FXML
-    private Button btn10;
-    @FXML
-    private Button btn11;
-    @FXML
-    private Button btn12;
-    @FXML
     private ScrollPane scroll;
     @FXML
     private GridPane grid;
     @FXML
-    private VBox btnbox00;
+    private HBox HBoxSearch;
     @FXML
-    private HBox btnbox01;
+    private Button btnSearch;
     @FXML
-    private HBox btnbox02;
+    private AnchorPane btnOther01;
+    @FXML
+    private AnchorPane btnOther02;
+    @FXML
+    private AnchorPane btnOther03;
+    @FXML
+    private AnchorPane btnOther04;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -70,11 +51,11 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);
         
-        //keyboard events
-        AnchorMain.setOnKeyReleased(this::keyReleased);
+        btnOther01.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther02.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther03.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther04.setOnMouseClicked(this::cmdMouse_Click);
         
-        //initialize buttons
-        initButton();
         //initialize grid
         initGrid();
         
@@ -105,100 +86,36 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         _screens_dashboard_controller = foValue;
     }
     
-    private void initButton(){
-        btn01.setText("F1 - Exit Window");
-        btn02.setText("");
-        btn03.setText("");
-        btn04.setText("");
-        btn05.setText("");
-        btn06.setText("");
-        btn07.setText("");
-        btn08.setText("");
-        btn09.setText("");
-        btn10.setText("");
-        btn11.setText("");
-        btn12.setText("");
+    private void cmdMouse_Click(MouseEvent event) {
+        String lsButton = ((AnchorPane) event.getSource()).getId();
+        System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
         
-        //Set action event handler for the buttons
-        btn01.setOnAction(this::cmdButton_Click);
-        btn02.setOnAction(this::cmdButton_Click);
-        btn03.setOnAction(this::cmdButton_Click);
-        btn04.setOnAction(this::cmdButton_Click);
-        btn05.setOnAction(this::cmdButton_Click);
-        btn06.setOnAction(this::cmdButton_Click);
-        btn07.setOnAction(this::cmdButton_Click);
-        btn08.setOnAction(this::cmdButton_Click);
-        btn09.setOnAction(this::cmdButton_Click);
-        btn10.setOnAction(this::cmdButton_Click);
-        btn11.setOnAction(this::cmdButton_Click);
-        btn12.setOnAction(this::cmdButton_Click);
-        
-        if (btn06.getText().isEmpty()){
-            btnbox00.setPrefHeight(btnbox00.getPrefHeight() / 2);
-            btnbox00.setPadding(new Insets(0, 0, 0, 0));
-            btnbox02.setPadding(new Insets(0, 0, 0, 0));
-            btnbox02.getChildren().clear();
-            btnbox02.setPrefHeight(0);
+        switch(lsButton){
+            case "btnOther01": //add to POS
+                break;
+            case "btnOther02": //add to JO
+                break;
+            case "btnOther03": //add to CO
+                break;
+            case "btnOther04": //exit window
+                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
+                _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+                break;
         }
-        
-        //adjust the width of dashboard/cart pane
-        _main_screen_controller.AnchorPaneMonitor.setPrefWidth(440.00);
     }
     
     private void cmdButton_Click(ActionEvent event) {
         String lsButton = ((Button) event.getSource()).getId();
         System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
-        
-        JSONObject loJSON;
-        
-        switch (lsButton){
-            case "btn01": //exit window
-                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
-                _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
-                break;
-            case "btn02":
-            case "btn03":
-            case "btn04":
-            case "btn05":
-            case "btn06":
-            case "btn07":
-            case "btn08":
-            case "btn09":
-            case "btn10":
-            case "btn11":
-            case "btn12":
-        }
-    }
-    
-    private void keyReleased(KeyEvent event) {
-        JSONObject loJSON;
-        
-        switch(event.getCode()){
-            case F1:
-                _screens_dashboard_controller.unloadScreen(_screens_dashboard_controller.getCurrentScreenIndex());
-                _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
-                break;
-            case F2:
-            case F3:
-            case F4:
-            case F5:
-            case F6:
-            case F7:
-            case F8:
-            case F9:
-            case F10:
-            case F11:
-            case F12:
-        }
     }
     
     private void initGrid(){
         grid.getChildren().clear();
         
         if (Double.valueOf(System.getProperty("system.screen.width")) >= 1920.0) //1920 x 1080
-            _max_grid_column = 3;
+            _max_grid_column = 4;
         else if (Double.valueOf(System.getProperty("system.screen.width")) >= 1366.0) //1366 x 768
-            _max_grid_column = 2;
+            _max_grid_column = 3;
         else
             _max_grid_column = 1;
         
@@ -224,12 +141,13 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         int row = 1;
         
         try {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 3; i++) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("PartsCatalogueChild.fxml"));
                 
                 PartsCatalogueChildController controller = new PartsCatalogueChildController();
                 controller.setData(_listener);
+                controller.setImagePath("org/xersys/imbentaryo/images/e-" + (i+1) + ".png");
                 
                 fxmlLoader.setController(controller);
                 
@@ -251,7 +169,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
                 grid.setPrefHeight(Region.USE_COMPUTED_SIZE);
                 grid.setMaxHeight(Region.USE_PREF_SIZE);
 
-                GridPane.setMargin(anchorPane, new Insets(5));
+                GridPane.setMargin(anchorPane, new Insets(15));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -263,9 +181,6 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;
     private PartsCatalogueListener _listener;
-    
-    private boolean _control_pressed;
-    private boolean _shift_pressed;
     
     private int _max_grid_column;
 
