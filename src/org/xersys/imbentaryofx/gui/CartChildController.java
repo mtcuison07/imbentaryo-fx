@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
@@ -13,8 +13,8 @@ import javafx.scene.control.Tooltip;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.xersys.imbentaryo.listener.CartCallback;
-import org.xersys.imbentaryo.listener.CartListener;
+import org.xersys.imbentaryofx.listener.CartCallback;
+import org.xersys.imbentaryofx.listener.CartListener;
 import org.xersys.kumander.util.StringUtil;
 
 public class CartChildController implements Initializable, CartListener {

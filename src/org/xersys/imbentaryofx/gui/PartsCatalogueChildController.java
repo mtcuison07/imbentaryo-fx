@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import org.xersys.imbentaryo.listener.PartsCatalogueListener;
+import org.xersys.imbentaryofx.listener.PartsCatalogueListener;
 
 
 public class PartsCatalogueChildController implements Initializable {

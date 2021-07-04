@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -9,10 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.json.simple.JSONObject;
-import org.xersys.imbentaryo.gui.handler.ControlledScreen;
-import org.xersys.imbentaryo.gui.handler.ScreenInfo;
-import org.xersys.imbentaryo.gui.handler.ScreensController;
-import org.xersys.imbentaryo.listener.PartsCatalogueListener;
+import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
+import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
+import org.xersys.imbentaryofx.gui.handler.ScreensController;
+import org.xersys.imbentaryofx.listener.PartsCatalogueListener;
 import org.xersys.kumander.base.Nautilus;
 import org.xersys.kumander.util.CommonUtil;
 

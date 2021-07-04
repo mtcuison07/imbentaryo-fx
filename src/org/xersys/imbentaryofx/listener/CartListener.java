@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.listener;
+package org.xersys.imbentaryofx.listener;
 
 public interface CartListener {
     public void setCallback(CartCallback foValue);

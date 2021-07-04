@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui.handler;
+package org.xersys.imbentaryofx.gui.handler;
 
 import java.util.ArrayList;
 import javafx.animation.KeyFrame;
@@ -10,7 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
-import org.xersys.imbentaryo.gui.MainScreenController;
+import org.xersys.imbentaryofx.gui.MainScreenController;
 import org.xersys.kumander.base.Nautilus;
 
 /**

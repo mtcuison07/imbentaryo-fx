@@ -1,10 +1,10 @@
-package org.xersys.imbentaryo.gui.handler;
+package org.xersys.imbentaryofx.gui.handler;
 
 import org.json.simple.JSONObject;
 
 public class ScreenInfo {
     public static final String RESOURCE_URL = "../";
-    public static final String CONTROLLER_URL = "org.xersys.imbentaryo.gui.";
+    public static final String CONTROLLER_URL = "org.xersys.imbentaryofx.gui.";
     
     public enum NAME{
         JOB_ORDER,
