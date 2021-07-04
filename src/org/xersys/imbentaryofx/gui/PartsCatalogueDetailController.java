@@ -14,8 +14,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
-import org.xersys.imbentaryo.gui.handler.ControlledScreen;
-import org.xersys.imbentaryo.gui.handler.ScreensController;
+import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
+import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.kumander.base.Nautilus;
 
 public class PartsCatalogueDetailController implements Initializable, ControlledScreen{

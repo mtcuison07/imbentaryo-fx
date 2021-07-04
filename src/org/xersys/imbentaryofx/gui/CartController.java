@@ -19,9 +19,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.xersys.imbentaryo.gui.handler.ControlledScreen;
-import org.xersys.imbentaryo.gui.handler.ScreensController;
-import org.xersys.imbentaryo.listener.CartCallback;
+import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
+import org.xersys.imbentaryofx.gui.handler.ScreensController;
+import org.xersys.imbentaryofx.listener.CartCallback;
 import org.xersys.kumander.base.Nautilus;
 import org.xersys.kumander.util.StringUtil;
 

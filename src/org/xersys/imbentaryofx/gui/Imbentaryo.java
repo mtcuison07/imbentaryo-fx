@@ -13,7 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.xersys.imbentaryo.gui.handler.ScreensController;
+import org.xersys.imbentaryofx.gui.handler.ScreensController;
 
 public class Imbentaryo extends Application {
     private final String FORM_TITLE = "Imbentaryo v1.0";
