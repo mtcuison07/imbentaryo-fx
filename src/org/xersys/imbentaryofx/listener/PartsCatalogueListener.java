@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.listener;
+package org.xersys.imbentaryofx.listener;
 
 public interface PartsCatalogueListener {
     public void onClickListener();

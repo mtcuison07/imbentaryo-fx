@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;

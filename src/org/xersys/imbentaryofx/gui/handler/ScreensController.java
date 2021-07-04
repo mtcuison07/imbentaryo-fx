@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui.handler;
+package org.xersys.imbentaryofx.gui.handler;
 
 import java.util.ArrayList;
 import javafx.animation.KeyFrame;

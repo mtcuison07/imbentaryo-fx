@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui.handler;
+package org.xersys.imbentaryofx.gui.handler;
 
 import org.xersys.imbentaryo.gui.MainScreenController;
 import org.xersys.kumander.base.Nautilus;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

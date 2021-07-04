@@ -1,4 +1,4 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
 import java.io.IOException;
 import java.net.URL;

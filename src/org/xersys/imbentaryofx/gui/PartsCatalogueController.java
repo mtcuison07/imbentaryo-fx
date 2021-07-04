@@ -1,13 +1,20 @@
-package org.xersys.imbentaryo.gui;
+package org.xersys.imbentaryofx.gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryo.gui.handler.ControlledScreen;
 import org.xersys.imbentaryo.gui.handler.ScreenInfo;
@@ -16,9 +23,17 @@ import org.xersys.imbentaryo.listener.PartsCatalogueListener;
 import org.xersys.kumander.base.Nautilus;
 import org.xersys.kumander.util.CommonUtil;
 
-public class PartsInquiryController implements Initializable, ControlledScreen{
+public class PartsCatalogueController implements Initializable, ControlledScreen{
     @FXML
     private AnchorPane AnchorMain;
+    @FXML
+    private ScrollPane scroll;
+    @FXML
+    private GridPane grid;
+    @FXML
+    private HBox HBoxSearch;
+    @FXML
+    private Button btnSearch;
     @FXML
     private AnchorPane btnOther01;
     @FXML
@@ -27,6 +42,7 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
     private AnchorPane btnOther03;
     @FXML
     private AnchorPane btnOther04;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //set the main anchor pane fit the size of its parent anchor pane
@@ -40,9 +56,14 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
         btnOther03.setOnMouseClicked(this::cmdMouse_Click);
         btnOther04.setOnMouseClicked(this::cmdMouse_Click);
         
+        //initialize grid
+        initGrid();
+        
         JSONObject loJSON = ScreenInfo.get(ScreenInfo.NAME.CART);
                 
         if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));
+        
+        displayImages();
     }    
 
     @Override
@@ -88,9 +109,79 @@ public class PartsInquiryController implements Initializable, ControlledScreen{
         System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
     }
     
+    private void initGrid(){
+        grid.getChildren().clear();
+        
+        if (Double.valueOf(System.getProperty("system.screen.width")) >= 1920.0) //1920 x 1080
+            _max_grid_column = 4;
+        else if (Double.valueOf(System.getProperty("system.screen.width")) >= 1366.0) //1366 x 768
+            _max_grid_column = 3;
+        else
+            _max_grid_column = 1;
+        
+    }
+    
+    private void displayImages(){
+        _listener = new PartsCatalogueListener() {
+            @Override
+            public void onClickListener() {
+                PartsCatalogueDetailController instance = new PartsCatalogueDetailController();
+                instance.setData();
+                instance.setNautilus(_nautilus);
+                instance.setParentController(_main_screen_controller);
+                instance.setScreensController(_screens_controller);
+                instance.setDashboardScreensController(_screens_dashboard_controller);
+                
+                _screens_controller.loadScreen("../PartsCatalogueDetail.fxml", (ControlledScreen) instance);
+                
+            }
+        };
+        
+        int column = 0;
+        int row = 1;
+        
+        try {
+            for (int i = 0; i < 3; i++) {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("PartsCatalogueChild.fxml"));
+                
+                PartsCatalogueChildController controller = new PartsCatalogueChildController();
+                controller.setData(_listener);
+                controller.setImagePath("org/xersys/imbentaryo/images/e-" + (i+1) + ".png");
+                
+                fxmlLoader.setController(controller);
+                
+                AnchorPane anchorPane = fxmlLoader.load();
+
+                if (column == _max_grid_column) {
+                    column = 0;
+                    row++;
+                }
+
+                grid.add(anchorPane, column++, row); //(child,column,row)
+                //set grid width
+                grid.setMinWidth(Region.USE_COMPUTED_SIZE);
+                grid.setPrefWidth(Region.USE_COMPUTED_SIZE);
+                grid.setMaxWidth(Region.USE_PREF_SIZE);
+
+                //set grid height
+                grid.setMinHeight(Region.USE_COMPUTED_SIZE);
+                grid.setPrefHeight(Region.USE_COMPUTED_SIZE);
+                grid.setMaxHeight(Region.USE_PREF_SIZE);
+
+                GridPane.setMargin(anchorPane, new Insets(15));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private Nautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;
     private PartsCatalogueListener _listener;
+    
+    private int _max_grid_column;
+
 }
