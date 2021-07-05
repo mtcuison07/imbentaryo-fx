@@ -1,5 +1,6 @@
 package org.xersys.imbentaryofx.gui;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,8 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -18,6 +19,7 @@ import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.kumander.base.Nautilus;
 import org.xersys.kumander.util.CommonUtil;
+import org.xersys.kumander.util.MsgBox;
 
 public class POSController implements Initializable, ControlledScreen{
     @FXML
@@ -82,6 +84,8 @@ public class POSController implements Initializable, ControlledScreen{
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);   
+        
+        initButton();
     }    
 
     @Override
@@ -109,13 +113,13 @@ public class POSController implements Initializable, ControlledScreen{
         System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
         
         switch (lsButton){
-            case "btn01":
+            case "btn01": //clear
                 break;
-            case "btn02":
+            case "btn02": //new
                 break;
-            case "btn03":
+            case "btn03": //pay
                 break;
-            case "btn04":
+            case "btn04": //search
                 break;
             case "btn05":
                 break;
@@ -131,7 +135,14 @@ public class POSController implements Initializable, ControlledScreen{
                 break;
             case "btn11":
                 break;
-            case "btn12": //exit
+            case "btn12": //close screen
+                if (_screens_controller.getScreenCount() > 1)
+                    _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+                else{
+                    if (MsgBox.showOkCancel("This action will exit the application.", "Please confirm...") == MsgBox.RESP_YES_OK){
+                        System.exit(0);
+                    }
+                }
                 break;
         }
     }
@@ -164,6 +175,74 @@ public class POSController implements Initializable, ControlledScreen{
                 break;
 
         }
+    }
+    
+    private void initButton(){
+        btn01.setOnAction(this::cmdButton_Click);
+        btn02.setOnAction(this::cmdButton_Click);
+        btn03.setOnAction(this::cmdButton_Click);
+        btn04.setOnAction(this::cmdButton_Click);
+        btn05.setOnAction(this::cmdButton_Click);
+        btn06.setOnAction(this::cmdButton_Click);
+        btn07.setOnAction(this::cmdButton_Click);
+        btn08.setOnAction(this::cmdButton_Click);
+        btn09.setOnAction(this::cmdButton_Click);
+        btn10.setOnAction(this::cmdButton_Click);
+        btn11.setOnAction(this::cmdButton_Click);
+        btn12.setOnAction(this::cmdButton_Click);
+        
+        btn01.setTooltip(new Tooltip("F1"));
+        btn02.setTooltip(new Tooltip("F2"));
+        btn03.setTooltip(new Tooltip("F3"));
+        btn04.setTooltip(new Tooltip("F4"));
+        btn05.setTooltip(new Tooltip("F5"));
+        btn06.setTooltip(new Tooltip("F6"));
+        btn07.setTooltip(new Tooltip("F7"));
+        btn08.setTooltip(new Tooltip("F8"));
+        btn09.setTooltip(new Tooltip("F9"));
+        btn10.setTooltip(new Tooltip("F10"));
+        btn11.setTooltip(new Tooltip("F11"));
+        btn12.setTooltip(new Tooltip("F12"));
+        
+        btn01.setText("Clear");
+        btn02.setText("New");
+        btn03.setText("Pay");
+        btn04.setText("Search");
+        btn05.setText("");
+        btn06.setText("");
+        btn07.setText("");
+        btn08.setText("");
+        btn09.setText("");
+        btn10.setText("");
+        btn11.setText("History");
+        btn12.setText("Close");              
+        
+        
+        btn01.setVisible(true);
+        btn02.setVisible(true);
+        btn03.setVisible(true);
+        btn04.setVisible(true);
+        btn05.setVisible(false);
+        btn06.setVisible(false);
+        btn07.setVisible(false);
+        btn08.setVisible(false);
+        btn09.setVisible(false);
+        btn10.setVisible(false);
+        btn11.setVisible(true);
+        btn12.setVisible(true);
+        
+        glyph01.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph02.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph03.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph04.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph05.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph06.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph07.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph08.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph09.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph10.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph11.setIcon(FontAwesomeIcon.ANCHOR);
+        glyph12.setIcon(FontAwesomeIcon.ANCHOR);
     }
     
     private void loadScreen(ScreenInfo.NAME  foValue){
