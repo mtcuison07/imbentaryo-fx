@@ -16,6 +16,7 @@ import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.CommonUtil;
 
 public class CustomerOrderController implements Initializable, ControlledScreen{
@@ -69,7 +70,7 @@ public class CustomerOrderController implements Initializable, ControlledScreen{
     }    
 
     @Override
-    public void setNautilus(Nautilus foValue) {
+    public void setNautilus(XNautilus foValue) {
         _nautilus = foValue;
     }    
 
@@ -242,7 +243,7 @@ public class CustomerOrderController implements Initializable, ControlledScreen{
         }
     }
     
-    private Nautilus _nautilus;
+    private XNautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;
