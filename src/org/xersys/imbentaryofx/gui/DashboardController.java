@@ -8,6 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.iface.XNautilus;
 
 public class DashboardController implements Initializable, ControlledScreen {
     @FXML
@@ -23,7 +24,7 @@ public class DashboardController implements Initializable, ControlledScreen {
     }       
 
     @Override
-    public void setNautilus(Nautilus foValue) {
+    public void setNautilus(XNautilus foValue) {
         _nautilus = foValue;
     }    
 
@@ -42,7 +43,7 @@ public class DashboardController implements Initializable, ControlledScreen {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    Nautilus _nautilus;
+    XNautilus _nautilus;
     MainScreenController _main_screen_controller;
     ScreensController _screens_controller;
 

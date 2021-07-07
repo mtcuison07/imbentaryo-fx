@@ -23,6 +23,7 @@ import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.CartCallback;
 import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.StringUtil;
 
 public class CartController implements Initializable, ControlledScreen {
@@ -51,7 +52,7 @@ public class CartController implements Initializable, ControlledScreen {
     }       
 
     @Override
-    public void setNautilus(Nautilus foValue) {
+    public void setNautilus(XNautilus foValue) {
         _nautilus = foValue;
     }    
 
@@ -143,7 +144,7 @@ public class CartController implements Initializable, ControlledScreen {
         }
     }
     
-    private Nautilus _nautilus;
+    private XNautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
     private CartCallback _callback;

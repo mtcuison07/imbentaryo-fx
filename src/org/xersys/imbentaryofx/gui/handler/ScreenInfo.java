@@ -13,7 +13,8 @@ public class ScreenInfo {
         POS,
         CUSTOMER_ORDER,
         DASHBOARD,
-        CART
+        CART, 
+        QUICK_SEARCH
     }
     
     public static JSONObject get(NAME foModule){
@@ -47,6 +48,10 @@ public class ScreenInfo {
             case CART:
                 loJSON.put("resource", RESOURCE_URL + "Cart.fxml");
                 loJSON.put("controller", CONTROLLER_URL + "CartController");
+                return loJSON;
+            case QUICK_SEARCH:
+                loJSON.put("resource", RESOURCE_URL + "QuickSearch.fxml");
+                loJSON.put("controller", CONTROLLER_URL + "QuickSearchController");
                 return loJSON;
         }
         

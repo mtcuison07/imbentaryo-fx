@@ -21,6 +21,7 @@ import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.PartsCatalogueListener;
 import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.CommonUtil;
 
 public class PartsCatalogueController implements Initializable, ControlledScreen{
@@ -67,7 +68,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
     }    
 
     @Override
-    public void setNautilus(Nautilus foValue) {
+    public void setNautilus(XNautilus foValue) {
         _nautilus = foValue;
     }
 
@@ -176,7 +177,7 @@ public class PartsCatalogueController implements Initializable, ControlledScreen
         }
     }
     
-    private Nautilus _nautilus;
+    private XNautilus _nautilus;
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;

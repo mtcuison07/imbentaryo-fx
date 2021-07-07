@@ -14,10 +14,18 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
+import org.xersys.kumander.iface.XNautilus;
 
 public class Imbentaryo extends Application {
     private final String FORM_TITLE = "Imbentaryo v1.0";
     private final String FORM_NAME = "MainScreen.fxml";
+    
+    private static XNautilus _instance;
+    
+    public void setNautilus(XNautilus foValue){
+        _instance = foValue;
+    }
+    
     
     @Override
     public void start(Stage stage) throws Exception {
@@ -29,7 +37,7 @@ public class Imbentaryo extends Application {
         //get the controller of the main interface
         MainScreenController loControl = new MainScreenController();
         //set the GRider Application Driver to the controller
-        //loControl.setGRider(poGRider);
+        loControl.setNautilus(_instance);
         
         //the controller class to the main interface
         fxmlLoader.setController(loControl);

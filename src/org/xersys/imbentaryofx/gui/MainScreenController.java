@@ -1,26 +1,20 @@
 package org.xersys.imbentaryofx.gui;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.json.simple.JSONObject;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
-import org.xersys.kumander.base.Nautilus;
+import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.CommonUtil;
 
 public class MainScreenController implements Initializable {
@@ -71,9 +65,18 @@ public class MainScreenController implements Initializable {
     @FXML
     private AnchorPane btnOther;
     
+    public void setNautilus(XNautilus foValue){
+        _nautilus = foValue;
+    }
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        if (_nautilus  == null) {
+            System.err.println("Application driver is not set.");
+            System.exit(1);
+        }
+
         _screens_controller = new ScreensController();
         _screens_controller.setParentPane(AnchorPaneBody);
         _screens_controller.setParentController(this);
@@ -178,6 +181,7 @@ public class MainScreenController implements Initializable {
                 
                 //prevent some window to user prev/fwrd screen
                 switch(loNode.getId()){
+                    case "QuickSearch":
                     case "PartsInquiry":
                     case "PartsCatalogue":
                     case "PartsCatalogueDetail":
@@ -196,7 +200,7 @@ public class MainScreenController implements Initializable {
         }
     }
     
-    private static Nautilus _nautilus;
+    private static XNautilus _nautilus;
     private static ScreensController _screens_controller;
     private static ScreensController _screens_dashboard_controller;
     
