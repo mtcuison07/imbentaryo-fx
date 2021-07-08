@@ -10,9 +10,10 @@
             <file>file:/F:/xurpas/imbentaryo/src/org/xersys/imbentaryo/gui/MainScreen.fxml</file>
         </group>
         <group name="kumander">
-            <file>file:/F:/xurpas/imbentaryo-fx/src/org/xersys/imbentaryofx/app/Login.java</file>
             <file>file:/F:/xurpas/imbentaryo-fx/src/org/xersys/imbentaryofx/gui/MainScreenController.java</file>
             <file>file:/F:/xurpas/imbentaryo-fx/src/org/xersys/imbentaryofx/gui/POSController.java</file>
+            <file>file:/F:/xurpas/imbentaryo-fx/src/org/xersys/imbentaryofx/gui/QuickSearchController.java</file>
+            <file>file:/F:/xurpas/imbentaryo-fx/src/org/xersys/imbentaryofx/gui/handler/ScreenInfo.java</file>
         </group>
     </open-files>
 </project-private>

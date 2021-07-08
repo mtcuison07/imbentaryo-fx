@@ -4,22 +4,29 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.QuickSearchCallback;
 import org.xersys.kumander.contants.SearchEnum;
 import org.xersys.kumander.iface.XMasDetTrans;
 import org.xersys.kumander.iface.XNautilus;
-import org.xersys.kumander.util.MsgBox;
 
 public class QuickSearchController implements Initializable, ControlledScreen {
     @FXML
@@ -76,9 +83,19 @@ public class QuickSearchController implements Initializable, ControlledScreen {
     private FontAwesomeIconView glyph11;
     @FXML
     private FontAwesomeIconView glyph12;
+    @FXML
+    private TableView table;
+    @FXML
+    private TextField txtSeeks01;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        if (_json == null){
+            System.err.println("No initial search result was passed.");
+            _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+            return;
+        }
+        
         //set the main anchor pane fit the size of its parent anchor pane
         AnchorMain.setTopAnchor(AnchorMain, 0.0);
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
@@ -86,7 +103,8 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         AnchorMain.setRightAnchor(AnchorMain, 0.0);   
         
         initButton();
-    
+        initGrid();
+        loadDetail();
     }    
     
     @Override
@@ -139,6 +157,176 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         _search_callback = foValue;
     }
     
+    public void setSearchResult(JSONObject foValue){
+        _json = foValue;
+    }
+    
+    private void loadDetail(){
+        JSONObject loJSON;
+        
+        if (_json == null){
+            System.err.println("No initial search result was passed.");
+            _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+            return;
+        }
+        
+        _data.clear();
+        
+        JSONArray loArray = (JSONArray) _json.get("payload");
+        String lsHeader = (String) _json.get("headers");
+        String lsColNme = (String) _json.get("colname");
+        
+        String [] lasHeader = lsHeader.split("»");
+        String [] lasColNme = lsColNme.split("»");
+        
+        for (Object obj : loArray){
+            loJSON = (JSONObject) obj;
+            
+            _data.add(new TableModel((lasHeader.length <= 0 ? "" : String.valueOf(loJSON.get(lasColNme[0]))), 
+                                    (lasHeader.length <= 1 ? "" : String.valueOf(loJSON.get(lasColNme[1]))), 
+                                    (lasHeader.length <= 2 ? "" : String.valueOf(loJSON.get(lasColNme[2]))), 
+                                    (lasHeader.length <= 3 ? "" : String.valueOf(loJSON.get(lasColNme[3]))), 
+                                    (lasHeader.length <= 4 ? "" : String.valueOf(loJSON.get(lasColNme[4]))),
+                                    (lasHeader.length <= 5 ? "" : String.valueOf(loJSON.get(lasColNme[5]))), 
+                                    (lasHeader.length <= 6 ? "" : String.valueOf(loJSON.get(lasColNme[6]))), 
+                                    (lasHeader.length <= 7 ? "" : String.valueOf(loJSON.get(lasColNme[7]))), 
+                                    (lasHeader.length <= 8 ? "" : String.valueOf(loJSON.get(lasColNme[8]))),
+                                    (lasHeader.length <= 9 ? "" : String.valueOf(loJSON.get(lasColNme[9])))));
+        }
+        
+        table.getSelectionModel().selectFirst();
+        pnSelectd = table.getSelectionModel().getSelectedIndex();
+        
+        txtSeeks01.setText(_value);
+        txtSeeks01.requestFocus();
+        txtSeeks01.end();
+    }
+    
+    private void initGrid(){
+        TableColumn index01 = new TableColumn("");
+        TableColumn index02 = new TableColumn("");
+        TableColumn index03 = new TableColumn("");
+        TableColumn index04 = new TableColumn("");
+        TableColumn index05 = new TableColumn("");
+        TableColumn index06 = new TableColumn("");
+        TableColumn index07 = new TableColumn("");
+        TableColumn index08 = new TableColumn("");
+        TableColumn index09 = new TableColumn("");
+        TableColumn index10 = new TableColumn("");
+        
+        index01.setSortable(false); index01.setResizable(false);
+        index02.setSortable(false); index02.setResizable(false);
+        index03.setSortable(false); index03.setResizable(false);
+        index04.setSortable(false); index04.setResizable(true);
+        index05.setSortable(false); index05.setResizable(true);
+        index06.setSortable(false); index06.setResizable(true);
+        index07.setSortable(false); index07.setResizable(true);
+        index08.setSortable(false); index08.setResizable(true);
+        index09.setSortable(false); index09.setResizable(true);
+        index10.setSortable(false); index10.setResizable(true);
+        
+        table.getColumns().clear();        
+        
+        String lsHeader = (String) _json.get("headers");
+        String [] lasHeader = lsHeader.split("»");
+        
+        for(int lnCtr = 1; lnCtr <= lasHeader.length; lnCtr++){
+            switch (lnCtr){
+                case 1: 
+                    index01.setText(lasHeader[lnCtr -1]); table.getColumns().add(index01);
+                    index01.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index01"));
+                    
+                    switch (lasHeader.length){
+                        case 1:
+                            index01.prefWidthProperty().bind(table.widthProperty().multiply(1)); break;
+                        case 2:
+                        case 3:
+                        case 4:
+                            index01.prefWidthProperty().bind(table.widthProperty().multiply(0.25)); break;
+                        default:
+                            index01.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
+                    }
+                    break;
+                case 2: 
+                    index02.setText(lasHeader[lnCtr -1]); table.getColumns().add(index02);
+                    index02.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index02"));
+                    
+                    switch (lasHeader.length){
+                        case 2:
+                            index02.prefWidthProperty().bind(table.widthProperty().multiply(0.75)); break;
+                        case 3:
+                            index02.prefWidthProperty().bind(table.widthProperty().multiply(0.50)); break;
+                        case 4:
+                            index02.prefWidthProperty().bind(table.widthProperty().multiply(0.40)); break;
+                        default:
+                            index02.prefWidthProperty().bind(table.widthProperty().multiply(0.35));
+                    }                    
+                    break;
+                case 3: 
+                    index03.setText(lasHeader[lnCtr -1]); table.getColumns().add(index03);
+                    index03.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index03"));
+                    
+                    switch (lasHeader.length){
+                        case 3:
+                            index03.prefWidthProperty().bind(table.widthProperty().multiply(0.25)); break;
+                        case 4:
+                            index03.prefWidthProperty().bind(table.widthProperty().multiply(0.20)); break;
+                        default:
+                            index03.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    }
+                    break;
+                case 4:
+                    index04.setText(lasHeader[lnCtr -1]); table.getColumns().add(index04);
+                    index04.prefWidthProperty().bind(table.widthProperty().multiply(0.20));
+                    index04.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index04"));
+                    
+                    switch (lasHeader.length){
+                        case 4:
+                            index04.prefWidthProperty().bind(table.widthProperty().multiply(0.15)); break;
+                        default:
+                            index04.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    }
+                    break;
+                case 5: 
+                    index05.setText(lasHeader[lnCtr -1]); table.getColumns().add(index05);
+                    index05.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index05.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index05")); 
+                    break;
+                case 6: 
+                    index06.setText(lasHeader[lnCtr -1]); table.getColumns().add(index06);
+                    index06.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index06.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index06")); 
+                    break;
+                case 7: 
+                    index07.setText(lasHeader[lnCtr -1]); table.getColumns().add(index07);
+                    index07.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index07.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index07")); 
+                    break;
+                case 8: 
+                    index08.setText(lasHeader[lnCtr -1]); table.getColumns().add(index08);
+                    index08.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index08.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index08")); 
+                    break;
+                case 9: 
+                    index09.setText(lasHeader[lnCtr -1]); table.getColumns().add(index09);
+                    index09.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index09.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index09")); 
+                    break;
+                case 10: 
+                    index10.setText(lasHeader[lnCtr -1]); table.getColumns().add(index10);
+                    index10.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+                    index10.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index10")); 
+                    break;
+                default:
+                    System.err.println("Columns exceeds the developer's max search limit.");
+                    _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+                    return;
+            }
+            
+            table.setItems(_data);
+        }
+    }
+    
     private void initButton(){
         btn01.setOnAction(this::cmdButton_Click);
         btn02.setOnAction(this::cmdButton_Click);
@@ -176,7 +364,7 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         btn08.setText("");
         btn09.setText("");
         btn10.setText("");
-        btn11.setText("History");
+        btn11.setText("");
         btn12.setText("Close");              
         
         
@@ -280,12 +468,18 @@ public class QuickSearchController implements Initializable, ControlledScreen {
     private ScreensController _screens_controller;
     private QuickSearchCallback _search_callback;
     
-    XMasDetTrans _trans;
+    private ObservableList<TableModel> _data = FXCollections.observableArrayList();
+    private TableModel _model;
+    private JSONObject _json;
     
-    SearchEnum.Type _type;
-    String _value;
-    String _key;
-    String _filter;
-    int _maxrow;
-    boolean _exact;
+    private int pnSelectd = -1;
+    
+    private XMasDetTrans _trans;
+
+    private SearchEnum.Type _type;
+    private String _value;
+    private String _key;
+    private String _filter;
+    private int _maxrow;
+    private boolean _exact;
 }

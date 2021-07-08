@@ -25,6 +25,7 @@ import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.QuickSearchCallback;
 import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.CommonUtil;
+import org.xersys.kumander.util.FXUtil;
 import org.xersys.kumander.util.MsgBox;
 
 public class POSController implements Initializable, ControlledScreen{
@@ -154,6 +155,15 @@ public class POSController implements Initializable, ControlledScreen{
                     break;
             }
         }
+        
+        switch (event.getCode()){
+        case ENTER:
+        case DOWN:
+            FXUtil.SetNextFocus(txtField);
+            break;
+        case UP:
+            FXUtil.SetPreviousFocus(txtField);
+        }
     }
     
     private void quickSearch(TextField foField, SearchEnum.Type foType, String fsValue, String fsKey, String fsFilter, int fnMax, boolean fbExact){        
@@ -181,9 +191,9 @@ public class POSController implements Initializable, ControlledScreen{
         }
         
         //multiple result, load the quick search to display records
-        loJSON = ScreenInfo.get(ScreenInfo.NAME.QUICK_SEARCH);
+        JSONObject loScreen = ScreenInfo.get(ScreenInfo.NAME.QUICK_SEARCH);
         
-        if (loJSON != null){
+        if (loScreen != null){
             QuickSearchController instance = new QuickSearchController();
             instance.setNautilus(_nautilus);
             instance.setParentController(_main_screen_controller);
@@ -195,8 +205,9 @@ public class POSController implements Initializable, ControlledScreen{
             instance.setSearchFilter(fsFilter);
             instance.setSearchMaxRow(fnMax);
             instance.setSearchExact(fbExact);
+            instance.setSearchResult(loJSON);
             
-            _screens_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) instance);
+            _screens_controller.loadScreen((String) loScreen.get("resource"), (ControlledScreen) instance);
         }
     }
     
