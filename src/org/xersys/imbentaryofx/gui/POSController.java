@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
@@ -27,6 +29,7 @@ import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.CommonUtil;
 import org.xersys.kumander.util.FXUtil;
 import org.xersys.kumander.util.MsgBox;
+import org.xersys.kumander.util.StringUtil;
 
 public class POSController implements Initializable, ControlledScreen{
     @FXML
@@ -38,53 +41,71 @@ public class POSController implements Initializable, ControlledScreen{
     @FXML
     private Button btn01;
     @FXML
-    private FontAwesomeIconView glyph01;
-    @FXML
     private Button btn02;
-    @FXML
-    private FontAwesomeIconView glyph02;
     @FXML
     private Button btn03;
     @FXML
-    private FontAwesomeIconView glyph03;
-    @FXML
     private Button btn04;
-    @FXML
-    private FontAwesomeIconView glyph04;
     @FXML
     private Button btn05;
     @FXML
-    private FontAwesomeIconView glyph05;
-    @FXML
     private Button btn06;
-    @FXML
-    private FontAwesomeIconView glyph06;
     @FXML
     private Button btn07;
     @FXML
-    private FontAwesomeIconView glyph07;
-    @FXML
     private Button btn08;
-    @FXML
-    private FontAwesomeIconView glyph08;
     @FXML
     private Button btn09;
     @FXML
-    private FontAwesomeIconView glyph09;
-    @FXML
     private Button btn10;
-    @FXML
-    private FontAwesomeIconView glyph10;
     @FXML
     private Button btn11;
     @FXML
-    private FontAwesomeIconView glyph11;
-    @FXML
     private Button btn12;
+    @FXML
+    private FontAwesomeIconView glyph01;
+    @FXML
+    private FontAwesomeIconView glyph02;
+    @FXML
+    private FontAwesomeIconView glyph03;
+    @FXML
+    private FontAwesomeIconView glyph04;
+    @FXML
+    private FontAwesomeIconView glyph05;
+    @FXML
+    private FontAwesomeIconView glyph06;
+    @FXML
+    private FontAwesomeIconView glyph07;
+    @FXML
+    private FontAwesomeIconView glyph08;
+    @FXML
+    private FontAwesomeIconView glyph09;
+    @FXML
+    private FontAwesomeIconView glyph10;
+    @FXML
+    private FontAwesomeIconView glyph11;
     @FXML
     private FontAwesomeIconView glyph12;
     @FXML
     private TextField txtSeeks01;
+    @FXML
+    private ComboBox cmbOrders;
+    @FXML
+    private TextField txtField11;
+    @FXML
+    private TextField txtField12;
+    @FXML
+    private TextField txtField13;
+    @FXML
+    private TextField txtField06;
+    @FXML
+    private TextField txtField07;
+    @FXML
+    private Label lblTranTotal;
+    @FXML
+    private Label lblTotalDisc;
+    @FXML
+    private Label lblPayable;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -94,6 +115,7 @@ public class POSController implements Initializable, ControlledScreen{
         }
         
         _trans = new Sales(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
+        _trans.setSaveToDisk(true);
         
         //set the main anchor pane fit the size of its parent anchor pane
         AnchorMain.setTopAnchor(AnchorMain, 0.0);
@@ -113,11 +135,13 @@ public class POSController implements Initializable, ControlledScreen{
         
         initButton();
         
-        if (!_trans.NewTransaction()){
+        if (!_trans.NewTransaction("0001")){
             System.err.println(_trans.getMessage());
             MsgBox.showOk(_trans.getMessage(), "Warning");
             System.exit(1);
         }
+        
+        loadTransaction();
     }    
 
     @Override
@@ -166,6 +190,14 @@ public class POSController implements Initializable, ControlledScreen{
         }
     }
     
+    private void loadTransaction(){
+        txtField06.setText((String) _trans.getMaster("sRemarksx"));
+        txtField07.setText((String) _trans.getMaster("sSalesman"));
+        
+        txtField11.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nDiscount"), "#,##0.00"));
+        txtField12.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nAddDiscx"), "#,##0.00"));
+        txtField13.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nFreightx"), "#,##0.00"));
+    }
     private void quickSearch(TextField foField, SearchEnum.Type foType, String fsValue, String fsKey, String fsFilter, int fnMax, boolean fbExact){        
         //pass the initial value do initial search
         JSONObject loJSON = _trans.Search(foType, fsValue, fsKey, fsFilter, fnMax, fbExact);
