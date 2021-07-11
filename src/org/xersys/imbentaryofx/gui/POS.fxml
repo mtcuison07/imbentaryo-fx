@@ -59,7 +59,7 @@
                                       </rowConstraints>
                                        <children>
                                           <Label prefHeight="41.0" prefWidth="100.0" text="Add Item:" />
-                                          <TextField fx:id="txtSeeks01" GridPane.columnIndex="1" />
+                                          <TextField fx:id="txtSeeks01" promptText="Quick Search" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
                                     <TableView focusTraversable="false" prefHeight="250.0" prefWidth="895.0" stylesheets="@../css/Tables.css" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0">
@@ -109,9 +109,9 @@
                                        </rowConstraints>
                                        <children>
                                           <Label prefHeight="41.0" prefWidth="100.0" text="Remarks:" />
-                                          <TextField fx:id="txtField06" prefHeight="55.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
+                                          <TextField fx:id="txtField06" alignment="TOP_LEFT" prefHeight="55.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                           <Label prefHeight="41.0" prefWidth="100.0" text="Salesman:" GridPane.rowIndex="2" />
-                                          <TextField fx:id="txtField07" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField fx:id="txtField07" promptText="Quick Search" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                        </children>
                                     </GridPane>
                                     <GridPane layoutX="546.0" layoutY="320.0" AnchorPane.leftAnchor="546.0" AnchorPane.topAnchor="320.0">

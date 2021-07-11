@@ -3,6 +3,7 @@ package org.xersys.imbentaryofx.gui;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
+import java.security.spec.KeySpec;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +16,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -101,6 +104,11 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);   
+        
+        txtSeeks01.setOnKeyPressed(this::keyPressed);
+        txtSeeks01.setOnKeyReleased(this::keyReleased);
+        
+        table.setOnMouseClicked(this::mouseClicked);
         
         initButton();
         initGrid();
@@ -327,6 +335,53 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         }
     }
     
+    private void keyReleased(KeyEvent event) {
+        if (null != event.getCode())switch (event.getCode()) {
+            case CONTROL:
+                _control_pressed = false;
+                return;
+            case DOWN:
+            case UP:
+                return;
+        }
+        
+        TextField txtField = (TextField) event.getSource();
+        String lsTxt = txtField.getId();
+        String lsValue = txtField.getText();
+        
+        JSONObject loJSON;
+        
+        switch (lsTxt){
+            case "txtSeeks01":
+                _value = lsValue;
+                _json = _trans.Search(_type, _value, _key, _filter, _maxrow, _exact);
+                loadDetail();
+                break;
+        }
+    }
+    
+    private void keyPressed(KeyEvent event) {       
+        if (null != event.getCode())switch (event.getCode()) {
+            case CONTROL:
+                _control_pressed = true;
+                return;
+            case DOWN:
+                if(_control_pressed){
+                    table.getSelectionModel().selectNext();
+                    pnSelectd = table.getSelectionModel().getSelectedIndex();
+                }
+                return;
+            case UP:
+                if(_control_pressed){
+                    table.getSelectionModel().selectPrevious();
+                    pnSelectd = table.getSelectionModel().getSelectedIndex();
+                }
+                return;
+            default:
+                break;
+        }
+    }
+    
     private void initButton(){
         btn01.setOnAction(this::cmdButton_Click);
         btn02.setOnAction(this::cmdButton_Click);
@@ -428,40 +483,24 @@ public class QuickSearchController implements Initializable, ControlledScreen {
                 break;
         }
     }
-    
-    public void keyReleased(KeyEvent event) {
-        switch(event.getCode()){
-            case F1:
-                break;
-            case F2: 
-                break;
-            case F3:
-                break;
-            case F4:
-                break;
-            case F5: 
-                break;
-            case F6:
-                break;
-            case F7:
-                break;
-            case F8: 
-                break;
-            case F9:
-                break;
-            case F10:
-                break;
-            case F11:
-                break;
-            case F12: 
-                break;
 
-        }
-    }
     
     private void loadData(){
+        JSONArray loArray = (JSONArray) _json.get("payload");
+        
+        if (loArray.size() > 0)
+            _search_callback.Result((JSONObject) loArray.get(pnSelectd));
+
         //load the data
         _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+    }
+    
+    private void mouseClicked(MouseEvent event) {
+        pnSelectd = table.getSelectionModel().getSelectedIndex();
+        
+        if (event.getClickCount() >= 2){
+            loadData();
+        }
     }
     
     private MainScreenController _main_screen_controller;
@@ -482,4 +521,6 @@ public class QuickSearchController implements Initializable, ControlledScreen {
     private String _filter;
     private int _maxrow;
     private boolean _exact;
+    
+    private boolean _control_pressed;
 }
