@@ -4,6 +4,8 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.property.ReadOnlyBooleanPropertyBase;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,12 +28,22 @@ import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.QuickSearchCallback;
 import org.xersys.kumander.iface.XNautilus;
-import org.xersys.kumander.util.CommonUtil;
 import org.xersys.kumander.util.FXUtil;
 import org.xersys.kumander.util.MsgBox;
 import org.xersys.kumander.util.StringUtil;
 
 public class POSController implements Initializable, ControlledScreen{
+    private XNautilus _nautilus;
+    private Sales _trans;
+    
+    private MainScreenController _main_screen_controller;
+    private ScreensController _screens_controller;
+    private ScreensController _screens_dashboard_controller;
+    private QuickSearchCallback _search_callback;
+    
+    private boolean _loaded = false;
+    private int _index;
+    
     @FXML
     private AnchorPane AnchorMain;
     @FXML
@@ -123,17 +135,8 @@ public class POSController implements Initializable, ControlledScreen{
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);   
         
-        txtSeeks01.setOnKeyPressed(this::txtField_KeyPressed);
-        
-        _search_callback = new QuickSearchCallback() {
-            @Override
-            public void Result(JSONObject foValue) {
-                System.out.println(foValue.toJSONString());
-            }
-        };
-        
-        
         initButton();
+        initFields();
         
         if (!_trans.NewTransaction("0001")){
             System.err.println(_trans.getMessage());
@@ -142,6 +145,8 @@ public class POSController implements Initializable, ControlledScreen{
         }
         
         loadTransaction();
+        
+        _loaded = true;
     }    
 
     @Override
@@ -230,6 +235,9 @@ public class POSController implements Initializable, ControlledScreen{
             instance.setNautilus(_nautilus);
             instance.setParentController(_main_screen_controller);
             instance.setScreensController(_screens_controller);
+            
+            instance.setTransObject(_trans);
+            instance.setSearchCallback(_search_callback);
             
             instance.setSearchType(foType);
             instance.setSearchValue(fsValue);
@@ -380,11 +388,59 @@ public class POSController implements Initializable, ControlledScreen{
         glyph12.setIcon(FontAwesomeIcon.ANCHOR);
     }
     
-    private XNautilus _nautilus;
-    private Sales _trans;
+    private void initFields(){
+        txtSeeks01.setOnKeyPressed(this::txtField_KeyPressed);
+        
+        _search_callback = new QuickSearchCallback() {
+            @Override
+            public void Result(JSONObject foValue) {
+                System.out.println(foValue.toJSONString());
+            }
+        };
+        
+        txtField06.focusedProperty().addListener(txtField_Focus);
+        txtField07.focusedProperty().addListener(txtField_Focus);
+        txtField11.focusedProperty().addListener(txtField_Focus);
+        txtField12.focusedProperty().addListener(txtField_Focus);
+        txtField13.focusedProperty().addListener(txtField_Focus);
+    }
     
-    private MainScreenController _main_screen_controller;
-    private ScreensController _screens_controller;
-    private ScreensController _screens_dashboard_controller;
-    private QuickSearchCallback _search_callback;
+    final ChangeListener<? super Boolean> txtField_Focus = (o,ov,nv)->{
+        if (!_loaded) return;
+        
+        TextField txtField = (TextField)((ReadOnlyBooleanPropertyBase)o).getBean();
+        int lnIndex = Integer.parseInt(txtField.getId().substring(8, 10));
+        String lsValue = txtField.getText();
+        
+        if (lsValue == null) return;
+        if(!nv){ //Lost Focus           
+            switch (lnIndex){
+                case 6: //remarks
+                case 7: //salesman
+                    _trans.setMaster(lnIndex, lsValue);
+                    break;
+                case 11: //discount rate
+                case 12: //additional discount
+                case 13: //freight charge                    
+                    double x = 0.00;
+                    try {
+                        //this mus be numeric else it will throw an error
+                        x = Double.parseDouble(lsValue);
+                    } catch (NumberFormatException e) {
+                        MsgBox.showOk("Input was not numeric.", "Warning");
+                        txtField.requestFocus(); 
+                        break;
+                    }
+                    _trans.setMaster(lnIndex, x);
+                    break;
+                default:
+                    MsgBox.showOk("Text field with name " + txtField.getId() + " not registered.", "Warning");
+            }
+            _index = lnIndex;
+        } else{ //Got Focus
+            _index = lnIndex;
+            txtField.selectAll();
+        }
+        
+    };
 }
