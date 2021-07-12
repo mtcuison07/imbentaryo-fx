@@ -1,7 +1,8 @@
 package org.xersys.imbentaryofx.listener;
 
+import javafx.scene.control.TextField;
 import org.json.simple.JSONObject;
 
 public interface QuickSearchCallback {
-    public void Result(JSONObject foValue);
+    public void Result(TextField foField,JSONObject foValue);
 }

@@ -3,7 +3,6 @@ package org.xersys.imbentaryofx.gui;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
-import java.security.spec.KeySpec;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +15,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -167,6 +165,10 @@ public class QuickSearchController implements Initializable, ControlledScreen {
     
     public void setSearchResult(JSONObject foValue){
         _json = foValue;
+    }
+    
+    public void setTextField(TextField foField){
+        _text_field = foField;
     }
     
     private void loadDetail(){
@@ -489,7 +491,7 @@ public class QuickSearchController implements Initializable, ControlledScreen {
         JSONArray loArray = (JSONArray) _json.get("payload");
         
         if (loArray.size() > 0)
-            _search_callback.Result((JSONObject) loArray.get(pnSelectd));
+            _search_callback.Result(_text_field, (JSONObject) loArray.get(pnSelectd));
 
         //load the data
         _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
@@ -522,5 +524,6 @@ public class QuickSearchController implements Initializable, ControlledScreen {
     private int _maxrow;
     private boolean _exact;
     
+    private TextField _text_field;
     private boolean _control_pressed;
 }

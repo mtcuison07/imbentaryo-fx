@@ -6,16 +6,22 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyBooleanPropertyBase;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -41,8 +47,12 @@ public class POSController implements Initializable, ControlledScreen{
     private ScreensController _screens_dashboard_controller;
     private QuickSearchCallback _search_callback;
     
+    private TableModel _table_model;
+    private ObservableList<TableModel> _table_data = FXCollections.observableArrayList();
+    
     private boolean _loaded = false;
     private int _index;
+    private int _detail_row;
     
     @FXML
     private AnchorPane AnchorMain;
@@ -118,6 +128,8 @@ public class POSController implements Initializable, ControlledScreen{
     private Label lblTotalDisc;
     @FXML
     private Label lblPayable;
+    @FXML
+    private TableView _table;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -137,6 +149,7 @@ public class POSController implements Initializable, ControlledScreen{
         
         initButton();
         initFields();
+        initGrid();
         
         if (!_trans.NewTransaction("0001")){
             System.err.println(_trans.getMessage());
@@ -202,7 +215,120 @@ public class POSController implements Initializable, ControlledScreen{
         txtField11.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nDiscount"), "#,##0.00"));
         txtField12.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nAddDiscx"), "#,##0.00"));
         txtField13.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nFreightx"), "#,##0.00"));
+        
+        loadDetail();
     }
+    
+    private void loadDetail(){
+        int lnCtr;
+        int lnRow = _trans.getItemCount();
+        
+        _table_data.clear();
+        
+        for(lnCtr = 0; lnCtr <= lnRow -1; lnCtr++){           
+            _table_data.add(new TableModel(String.valueOf(lnCtr + 1), 
+                        (String) _trans.getDetail(lnCtr, 100),
+                        (String) _trans.getDetail(lnCtr, 101), 
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""));
+        }
+
+        if (!_table_data.isEmpty()){
+            _table.getSelectionModel().select(_detail_row);
+            _table.getFocusModel().focus(_detail_row); 
+            _detail_row = _table.getSelectionModel().getSelectedIndex();           
+        }        
+    }
+    
+    private void initGrid(){
+        TableColumn index01 = new TableColumn("");
+        TableColumn index02 = new TableColumn("");
+        TableColumn index03 = new TableColumn("");
+        TableColumn index04 = new TableColumn("");
+        TableColumn index05 = new TableColumn("");
+        TableColumn index06 = new TableColumn("");
+        TableColumn index07 = new TableColumn("");
+        TableColumn index08 = new TableColumn("");
+        TableColumn index09 = new TableColumn("");
+        TableColumn index10 = new TableColumn("");
+        
+        index01.setSortable(false); index01.setResizable(false);
+        index02.setSortable(false); index02.setResizable(false);
+        index03.setSortable(false); index03.setResizable(false);
+        index04.setSortable(false); index04.setResizable(true);
+        index05.setSortable(false); index05.setResizable(true);
+        index06.setSortable(false); index06.setResizable(true);
+        index07.setSortable(false); index07.setResizable(true);
+        index08.setSortable(false); index08.setResizable(true);
+        index09.setSortable(false); index09.setResizable(true);
+        index10.setSortable(false); index10.setResizable(true);
+        
+        _table.getColumns().clear();        
+        
+        index01.setText("No."); 
+        index01.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index01"));
+        index01.prefWidthProperty().set(30);
+        
+        index02.setText("Part Number"); 
+        index02.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index02"));
+        index02.prefWidthProperty().set(130);
+        
+        index03.setText("Description"); 
+        index03.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index03"));
+        index03.prefWidthProperty().set(185);
+        
+        index04.setText("Other Info"); 
+        index04.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index04"));
+        index04.prefWidthProperty().set(137);
+        
+        index05.setText("Unit Price"); 
+        index05.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index05"));
+        index05.prefWidthProperty().set(80);
+        
+        index06.setText("QOH"); 
+        index06.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index06"));
+        index06.prefWidthProperty().set(60);
+        
+        index07.setText("Order"); 
+        index07.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index07"));
+        index07.prefWidthProperty().set(60);
+        
+        index08.setText("Disc."); 
+        index08.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index08"));
+        index08.prefWidthProperty().set(60);
+        
+        index09.setText("Adtl."); 
+        index09.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index09"));
+        index09.prefWidthProperty().set(60);
+        
+        index10.setText("Total"); 
+        index10.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index10"));
+        index10.prefWidthProperty().set(85);
+        
+        _table.getColumns().add(index01);
+        _table.getColumns().add(index02);
+        _table.getColumns().add(index03);
+        _table.getColumns().add(index04);
+        _table.getColumns().add(index05);
+        _table.getColumns().add(index06);
+        _table.getColumns().add(index07);
+        _table.getColumns().add(index08);
+        _table.getColumns().add(index09);
+        _table.getColumns().add(index10);
+        
+        _table.setItems(_table_data);
+        _table.setOnMouseClicked(this::tableClicked);
+    }
+    
+    private void tableClicked(MouseEvent event) { 
+        _detail_row = _table.getSelectionModel().getSelectedIndex();
+    }
+    
     private void quickSearch(TextField foField, SearchEnum.Type foType, String fsValue, String fsKey, String fsFilter, int fnMax, boolean fbExact){        
         //pass the initial value do initial search
         JSONObject loJSON = _trans.Search(foType, fsValue, fsKey, fsFilter, fnMax, fbExact);
@@ -246,6 +372,7 @@ public class POSController implements Initializable, ControlledScreen{
             instance.setSearchMaxRow(fnMax);
             instance.setSearchExact(fbExact);
             instance.setSearchResult(loJSON);
+            instance.setTextField(foField);
             
             _screens_controller.loadScreen((String) loScreen.get("resource"), (ControlledScreen) instance);
         }
@@ -391,10 +518,12 @@ public class POSController implements Initializable, ControlledScreen{
     private void initFields(){
         txtSeeks01.setOnKeyPressed(this::txtField_KeyPressed);
         
-        _search_callback = new QuickSearchCallback() {
-            @Override
-            public void Result(JSONObject foValue) {
-                System.out.println(foValue.toJSONString());
+        _search_callback = (TextField foField, JSONObject foValue) -> {
+            switch (foField.getId()){
+                case "txtSeeks01":
+                    _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) foValue.get("sStockIDx"));
+                    loadDetail();
+                    break;
             }
         };
         
