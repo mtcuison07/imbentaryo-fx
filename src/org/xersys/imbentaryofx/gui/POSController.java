@@ -3,9 +3,11 @@ package org.xersys.imbentaryofx.gui;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyBooleanPropertyBase;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,19 +30,23 @@ import javafx.scene.layout.VBox;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.xersys.bili.bo.Sales;
+import org.xersys.bili.dto.Temp_Transactions;
 import org.xersys.kumander.contants.SearchEnum;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
 import org.xersys.imbentaryofx.listener.QuickSearchCallback;
+import org.xersys.kumander.iface.LMasDetTrans;
 import org.xersys.kumander.iface.XNautilus;
 import org.xersys.kumander.util.FXUtil;
 import org.xersys.kumander.util.MsgBox;
+import org.xersys.kumander.util.SQLUtil;
 import org.xersys.kumander.util.StringUtil;
 
 public class POSController implements Initializable, ControlledScreen{
     private XNautilus _nautilus;
     private Sales _trans;
+    private LMasDetTrans _listener;
     
     private MainScreenController _main_screen_controller;
     private ScreensController _screens_controller;
@@ -130,34 +136,36 @@ public class POSController implements Initializable, ControlledScreen{
     private Label lblPayable;
     @FXML
     private TableView _table;
+    @FXML
+    private Label lblFreight;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
-        if (_nautilus  == null) {
-            System.err.println("Application driver is not set.");
-            System.exit(1);
-        }
-        
-        _trans = new Sales(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
-        _trans.setSaveToDisk(true);
-        
         //set the main anchor pane fit the size of its parent anchor pane
         AnchorMain.setTopAnchor(AnchorMain, 0.0);
         AnchorMain.setBottomAnchor(AnchorMain, 0.0);
         AnchorMain.setLeftAnchor(AnchorMain, 0.0);
         AnchorMain.setRightAnchor(AnchorMain, 0.0);   
         
-        initButton();
-        initFields();
-        initGrid();
-        
-        if (!_trans.NewTransaction("0001")){
-            System.err.println(_trans.getMessage());
-            MsgBox.showOk(_trans.getMessage(), "Warning");
+        if (_nautilus  == null) {
+            System.err.println("Application driver is not set.");
             System.exit(1);
         }
         
-        loadTransaction();
+        initButton();
+        initFields();
+        initListener();
+        
+        _trans = new Sales(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
+        _trans.setSaveToDisk(true);
+        _trans.setListener(_listener);
+        
+        if (_trans.TempTransactions().isEmpty())
+            createNew("");
+        else
+            createNew(_trans.TempTransactions().get(0).getOrderNo());
+        
+        cmbOrders.getSelectionModel().select(0);
         
         _loaded = true;
     }    
@@ -180,6 +188,17 @@ public class POSController implements Initializable, ControlledScreen{
     @Override
     public void setDashboardScreensController(ScreensController foValue) {
         _screens_dashboard_controller = foValue;
+    }
+    
+    private void createNew(String fsOrderNox){
+        if (!_trans.NewTransaction(fsOrderNox)){
+            System.err.println(_trans.getMessage());
+            MsgBox.showOk(_trans.getMessage(), "Warning");
+            System.exit(1);
+        }
+        
+        clearFields();
+        loadTransaction();
     }
     
     private void txtField_KeyPressed(KeyEvent event) {
@@ -208,15 +227,62 @@ public class POSController implements Initializable, ControlledScreen{
         }
     }
     
+    private void clearFields(){
+        initGrid();
+        
+        txtSeeks01.setText("");
+        txtField06.setText("");
+        txtField07.setText("");
+        txtField11.setText("0.00");
+        txtField12.setText("0.00");
+        txtField13.setText("0.00");
+        
+        lblTranTotal.setText("0.00");
+        lblTotalDisc.setText("0.00");
+        lblFreight.setText("0.00");
+        lblPayable.setText("0.00");
+        
+        //load temporary transactions
+        ArrayList<Temp_Transactions> laTemp = _trans.TempTransactions();
+        ObservableList<String> lsOrderNox = FXCollections.observableArrayList();
+        
+        if (laTemp.size() > 0){    
+            for (int lnCtr = 0; lnCtr <= laTemp.size()-1; lnCtr ++){
+                lsOrderNox.add(laTemp.get(lnCtr).getOrderNo() + " (" +SQLUtil.dateFormat(laTemp.get(lnCtr).getDateCreated(), SQLUtil.FORMAT_TIMESTAMP) + ")");
+            }
+        }
+        
+        cmbOrders.setItems(lsOrderNox);  
+        
+        txtSeeks01.requestFocus();
+    }
+    
+    private void computeSummary(){
+        double lnTranTotl = ((Number) _trans.getMaster("nTranTotl")).doubleValue();
+        double lnDiscount = ((Number) _trans.getMaster("nDiscount")).doubleValue();
+        double lnAddDiscx = ((Number) _trans.getMaster("nAddDiscx")).doubleValue();
+        double lnFreightx = ((Number) _trans.getMaster("nFreightx")).doubleValue();
+        double lnTotlDisc = lnTranTotl * lnDiscount + lnAddDiscx;
+        
+        txtField11.setText(StringUtil.NumberFormat(lnDiscount, "#,##0.00"));
+        txtField12.setText(StringUtil.NumberFormat(lnAddDiscx, "#,##0.00"));
+        txtField13.setText(StringUtil.NumberFormat(lnFreightx, "#,##0.00"));
+        
+        lblTranTotal.setText(StringUtil.NumberFormat(lnTranTotl, "#,##0.00"));
+        lblTotalDisc.setText(StringUtil.NumberFormat(lnTotlDisc, "#,##0.00"));
+        lblFreight.setText(StringUtil.NumberFormat(lnFreightx, "#,##0.00"));
+        lblPayable.setText(StringUtil.NumberFormat(lnTranTotl - lnTotlDisc + lnFreightx, "#,##0.00"));
+    }
+    
     private void loadTransaction(){
         txtField06.setText((String) _trans.getMaster("sRemarksx"));
         txtField07.setText((String) _trans.getMaster("sSalesman"));
         
-        txtField11.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nDiscount"), "#,##0.00"));
-        txtField12.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nAddDiscx"), "#,##0.00"));
-        txtField13.setText(StringUtil.NumberFormat((Number) _trans.getMaster("nFreightx"), "#,##0.00"));
+        computeSummary();
         
         loadDetail();
+        
+        txtSeeks01.requestFocus();
     }
     
     private void loadDetail(){
@@ -225,24 +291,40 @@ public class POSController implements Initializable, ControlledScreen{
         
         _table_data.clear();
         
+        double lnUnitPrce;
+        double lnDiscount;
+        double lnAddDiscx;
+        double lnTranTotl;
+        int lnQuantity;
+        
         for(lnCtr = 0; lnCtr <= lnRow -1; lnCtr++){           
+            lnQuantity = (int) _trans.getDetail(lnCtr, "nQuantity");
+            lnUnitPrce = ((Number)_trans.getDetail(lnCtr, "nUnitPrce")).doubleValue();
+            lnDiscount = ((Number)_trans.getDetail(lnCtr, "nDiscount")).doubleValue();
+            lnAddDiscx = ((Number)_trans.getDetail(lnCtr, "nAddDiscx")).doubleValue();
+            lnTranTotl = (lnQuantity * (lnUnitPrce - (lnUnitPrce * lnDiscount))) - lnAddDiscx;
+            
             _table_data.add(new TableModel(String.valueOf(lnCtr + 1), 
                         (String) _trans.getDetail(lnCtr, 100),
                         (String) _trans.getDetail(lnCtr, 101), 
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        ""));
+                        (String) _trans.getDetail(lnCtr, 102),
+                        StringUtil.NumberFormat(lnUnitPrce, "#,##0.00"),
+                        String.valueOf(_trans.getDetail(lnCtr, 103)),
+                        String.valueOf(lnQuantity),
+                        StringUtil.NumberFormat(lnDiscount, "#,##0.00"),
+                        StringUtil.NumberFormat(lnAddDiscx, "#,##0.00"),
+                        StringUtil.NumberFormat(lnTranTotl, "#,##0.00")));
         }
 
         if (!_table_data.isEmpty()){
             _table.getSelectionModel().select(_detail_row);
             _table.getFocusModel().focus(_detail_row); 
             _detail_row = _table.getSelectionModel().getSelectedIndex();           
-        }        
+        }
+        
+        txtSeeks01.requestFocus();
+        
+        computeSummary();
     }
     
     private void initGrid(){
@@ -261,12 +343,12 @@ public class POSController implements Initializable, ControlledScreen{
         index02.setSortable(false); index02.setResizable(false);
         index03.setSortable(false); index03.setResizable(false);
         index04.setSortable(false); index04.setResizable(true);
-        index05.setSortable(false); index05.setResizable(true);
-        index06.setSortable(false); index06.setResizable(true);
-        index07.setSortable(false); index07.setResizable(true);
-        index08.setSortable(false); index08.setResizable(true);
-        index09.setSortable(false); index09.setResizable(true);
-        index10.setSortable(false); index10.setResizable(true);
+        index05.setSortable(false); index05.setResizable(true); index05.setStyle( "-fx-alignment: CENTER-RIGHT;");
+        index06.setSortable(false); index06.setResizable(true); index06.setStyle( "-fx-alignment: CENTER;");
+        index07.setSortable(false); index07.setResizable(true); index07.setStyle( "-fx-alignment: CENTER;");
+        index08.setSortable(false); index08.setResizable(true); index08.setStyle( "-fx-alignment: CENTER-RIGHT;");
+        index09.setSortable(false); index09.setResizable(true); index09.setStyle( "-fx-alignment: CENTER-RIGHT;");
+        index10.setSortable(false); index10.setResizable(true); index10.setStyle( "-fx-alignment: CENTER-RIGHT;");
         
         _table.getColumns().clear();        
         
@@ -384,8 +466,30 @@ public class POSController implements Initializable, ControlledScreen{
         
         switch (lsButton){
             case "btn01": //clear
+                if (_trans.DeleteTempTransaction(_trans.TempTransactions().get(cmbOrders.getSelectionModel().getSelectedIndex()))){
+                    _loaded = false;
+                    
+                    if (_trans.TempTransactions().isEmpty()){
+                        createNew("");
+                        cmbOrders.getSelectionModel().select(0);
+                    } else {
+                        createNew(_trans.TempTransactions().get(_trans.TempTransactions().size() - 1).getOrderNo());
+                         cmbOrders.getSelectionModel().select(_trans.TempTransactions().size() - 1);
+                    }
+                        
+                    _loaded = true;
+                }
                 break;
             case "btn02": //new
+                _loaded = false;
+                
+                createNew("");
+                clearFields();
+                loadTransaction();
+                
+               cmbOrders.getSelectionModel().select(_trans.TempTransactions().size() - 1);  
+               
+               _loaded = true;
                 break;
             case "btn03": //pay
                 break;
@@ -445,6 +549,27 @@ public class POSController implements Initializable, ControlledScreen{
                 break;
 
         }
+    }
+    
+    private void initListener(){
+        _listener = new LMasDetTrans() {
+            @Override
+            public void MasterRetreive(String fsFieldNm, Object foValue) {
+                switch(fsFieldNm){
+                    case "nTranTtal":
+                    case "nDiscount":
+                    case "nAddDiscx":
+                    case "nFreightx":
+                        computeSummary();
+                        break;
+                }
+            }
+
+            @Override
+            public void DetailRetreive(int fnRow, String fsFieldNm, Object foValue) {
+                loadDetail();
+            }
+        };
     }
     
     private void initButton(){
@@ -517,6 +642,11 @@ public class POSController implements Initializable, ControlledScreen{
     
     private void initFields(){
         txtSeeks01.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField06.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField07.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField11.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField12.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField13.setOnKeyPressed(this::txtField_KeyPressed);
         
         _search_callback = (TextField foField, JSONObject foValue) -> {
             switch (foField.getId()){
@@ -532,6 +662,13 @@ public class POSController implements Initializable, ControlledScreen{
         txtField11.focusedProperty().addListener(txtField_Focus);
         txtField12.focusedProperty().addListener(txtField_Focus);
         txtField13.focusedProperty().addListener(txtField_Focus);
+        
+        cmbOrders.valueProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (_loaded) createNew(_trans.TempTransactions().get(cmbOrders.getSelectionModel().getSelectedIndex()).getOrderNo());
+            }
+        });
     }
     
     final ChangeListener<? super Boolean> txtField_Focus = (o,ov,nv)->{
@@ -571,5 +708,5 @@ public class POSController implements Initializable, ControlledScreen{
             txtField.selectAll();
         }
         
-    };
+    };    
 }
