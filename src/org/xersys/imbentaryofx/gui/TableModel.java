@@ -46,15 +46,15 @@ public class TableModel {
     public String getIndex06(){return index06.get();}
     public void setIndex06(String index06){this.index06.set(index06);}
     
-    public String getindex07(){return index07.get();}
-    public void setindex07(String index07){this.index07.set(index07);}
+    public String getIndex07(){return index07.get();}
+    public void setIndex07(String index07){this.index07.set(index07);}
     
-    public String getindex08(){return index08.get();}
-    public void setindex08(String index08){this.index08.set(index08);}
+    public String getIndex08(){return index08.get();}
+    public void setIndex08(String index08){this.index08.set(index08);}
     
-    public String getindex09(){return index09.get();}
-    public void setindex09(String index09){this.index09.set(index09);}
+    public String getIndex09(){return index09.get();}
+    public void setIndex09(String index09){this.index09.set(index09);}
     
-    public String getindex10(){return index10.get();}
-    public void setindex10(String index10){this.index10.set(index10);}
+    public String getIndex10(){return index10.get();}
+    public void setIndex10(String index10){this.index10.set(index10);}
 }
