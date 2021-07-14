@@ -205,15 +205,14 @@ public class POSController implements Initializable, ControlledScreen{
         TextField txtField = (TextField) event.getSource();
         String lsTxt = txtField.getId();
         String lsValue = txtField.getText();
-        
-        JSONObject loJSON;
-        
+                
         if (event.getCode() == KeyCode.ENTER){
             switch (lsTxt){
                 case "txtSeeks01":
                     System.out.println(this.getClass().getSimpleName() + " " + lsTxt + " was used for searching");                    
                     quickSearch(txtField, SearchEnum.Type.searchInvBranchComplex, lsValue, "sBarCodex", "", 15, false);
-                    break;
+                    event.consume();
+                    return;
             }
         }
         
@@ -281,8 +280,6 @@ public class POSController implements Initializable, ControlledScreen{
         computeSummary();
         
         loadDetail();
-        
-        txtSeeks01.requestFocus();
     }
     
     private void loadDetail(){
@@ -322,9 +319,10 @@ public class POSController implements Initializable, ControlledScreen{
             _detail_row = _table.getSelectionModel().getSelectedIndex();           
         }
         
-        txtSeeks01.requestFocus();
-        
         computeSummary();
+        
+        txtSeeks01.setText("");
+        txtSeeks01.requestFocus();
     }
     
     private void initGrid(){
@@ -431,7 +429,9 @@ public class POSController implements Initializable, ControlledScreen{
         
         //only one record was retreived, load the data
         if (loArr.size() == 1) {
-            //TODO: use fofield here.
+            loJSON = (JSONObject) loArr.get(0);
+            _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) loJSON.get("sStockIDx"));
+            loadDetail();
             return;
         }
         
@@ -492,6 +492,20 @@ public class POSController implements Initializable, ControlledScreen{
                _loaded = true;
                 break;
             case "btn03": //pay
+                if (_trans.SaveTransaction(true)){
+                    MsgBox.showOk("Transaction saved successfully and ready for paying.", "Success");
+                    
+                    _loaded = false;
+
+                    createNew("");
+                    clearFields();
+                    loadTransaction();
+
+                   cmbOrders.getSelectionModel().select(_trans.TempTransactions().size() - 1);  
+
+                   _loaded = true;
+                } else 
+                    MsgBox.showOk(_trans.getMessage(), "Warning");
                 break;
             case "btn04": //search
                 break;
@@ -608,7 +622,7 @@ public class POSController implements Initializable, ControlledScreen{
         btn07.setText("");
         btn08.setText("");
         btn09.setText("");
-        btn10.setText("");
+        btn10.setText("Cashier");
         btn11.setText("History");
         btn12.setText("Close");              
         
@@ -622,7 +636,7 @@ public class POSController implements Initializable, ControlledScreen{
         btn07.setVisible(false);
         btn08.setVisible(false);
         btn09.setVisible(false);
-        btn10.setVisible(false);
+        btn10.setVisible(true);
         btn11.setVisible(true);
         btn12.setVisible(true);
         
@@ -648,12 +662,20 @@ public class POSController implements Initializable, ControlledScreen{
         txtField12.setOnKeyPressed(this::txtField_KeyPressed);
         txtField13.setOnKeyPressed(this::txtField_KeyPressed);
         
-        _search_callback = (TextField foField, JSONObject foValue) -> {
-            switch (foField.getId()){
-                case "txtSeeks01":
-                    _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) foValue.get("sStockIDx"));
-                    loadDetail();
-                    break;
+        _search_callback = new QuickSearchCallback() {
+            @Override
+            public void Result(TextField foField, JSONObject foValue) {
+                switch (foField.getId()){
+                    case "txtSeeks01":
+                        _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) foValue.get("sStockIDx"));
+                        loadDetail();
+                        break;
+                }
+            }
+
+            @Override
+            public void FormClosing() {
+                txtSeeks01.requestFocus();
             }
         };
         

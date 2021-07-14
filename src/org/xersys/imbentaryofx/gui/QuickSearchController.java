@@ -495,6 +495,7 @@ public class QuickSearchController implements Initializable, ControlledScreen {
 
         //load the data
         _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+        _search_callback.FormClosing();
     }
     
     private void mouseClicked(MouseEvent event) {
