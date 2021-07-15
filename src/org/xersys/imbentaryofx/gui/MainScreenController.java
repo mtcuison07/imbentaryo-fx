@@ -181,6 +181,7 @@ public class MainScreenController implements Initializable {
                 
                 //prevent some window to user prev/fwrd screen
                 switch(loNode.getId()){
+                    case "POSDetail":
                     case "QuickSearch":
                     case "PartsInquiry":
                     case "PartsCatalogue":
