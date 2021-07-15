@@ -35,6 +35,7 @@ import org.xersys.kumander.contants.SearchEnum;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
 import org.xersys.imbentaryofx.gui.handler.ScreenInfo;
 import org.xersys.imbentaryofx.gui.handler.ScreensController;
+import org.xersys.imbentaryofx.listener.DetailUpdateCallback;
 import org.xersys.imbentaryofx.listener.QuickSearchCallback;
 import org.xersys.kumander.iface.LMasDetTrans;
 import org.xersys.kumander.iface.XNautilus;
@@ -52,6 +53,7 @@ public class POSController implements Initializable, ControlledScreen{
     private ScreensController _screens_controller;
     private ScreensController _screens_dashboard_controller;
     private QuickSearchCallback _search_callback;
+    private DetailUpdateCallback _detail_update_callback;
     
     private TableModel _table_model;
     private ObservableList<TableModel> _table_data = FXCollections.observableArrayList();
@@ -155,6 +157,7 @@ public class POSController implements Initializable, ControlledScreen{
         initButton();
         initFields();
         initListener();
+
         
         _trans = new Sales(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
         _trans.setSaveToDisk(true);
@@ -407,6 +410,32 @@ public class POSController implements Initializable, ControlledScreen{
     
     private void tableClicked(MouseEvent event) { 
         _detail_row = _table.getSelectionModel().getSelectedIndex();
+        
+        if (event.getClickCount() >= 2){
+            if (_detail_row >= 0){
+                //multiple result, load the quick search to display records
+                JSONObject loScreen = ScreenInfo.get(ScreenInfo.NAME.POS_DETAIL_UPDATE);
+                
+                POSDetailController instance = new POSDetailController();
+                
+                instance.setNautilus(_nautilus);
+                instance.setParentController(_main_screen_controller);
+                instance.setScreensController(_screens_controller);
+                instance.setCallback(_detail_update_callback);
+                
+                instance.setDetailRow(_detail_row);
+                instance.setPartNumber((String) _trans.getDetail(_detail_row, 100));
+                instance.setDescription((String) _trans.getDetail(_detail_row, 101));
+                instance.setOtherInfo((String) _trans.getDetail(_detail_row, 102));
+                instance.setOnHand((int) _trans.getDetail(_detail_row, 103));
+                instance.setQtyOrder((int) _trans.getDetail(_detail_row, "nQuantity"));
+                instance.setSellingPrice((double) _trans.getDetail(_detail_row, "nUnitPrce"));
+                instance.setDiscount((double) _trans.getDetail(_detail_row, "nDiscount"));
+                instance.setAdditional((double) _trans.getDetail(_detail_row, "nAddDiscx"));
+                
+                _screens_controller.loadScreen((String) loScreen.get("resource"), (ControlledScreen) instance);
+            }
+        }
     }
     
     private void quickSearch(TextField foField, SearchEnum.Type foType, String fsValue, String fsKey, String fsFilter, int fnMax, boolean fbExact){        
@@ -584,6 +613,50 @@ public class POSController implements Initializable, ControlledScreen{
                 loadDetail();
             }
         };
+        
+        _search_callback = new QuickSearchCallback() {
+            @Override
+            public void Result(TextField foField, JSONObject foValue) {
+                switch (foField.getId()){
+                    case "txtSeeks01":
+                        _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) foValue.get("sStockIDx"));
+                        loadDetail();
+                        break;
+                }
+            }
+
+            @Override
+            public void FormClosing() {
+                txtSeeks01.requestFocus();
+            }
+        };
+        
+        _detail_update_callback = new DetailUpdateCallback() {
+            @Override
+            public void Result(int fnRow, int fnIndex, Object foValue) {
+                switch(fnIndex){
+                    case 5:
+                    case 8:
+                    case 9:
+                        _trans.setDetail(fnRow, fnIndex, foValue);
+                        break;
+                }
+                loadDetail();
+            }
+
+            @Override
+            public void RemovedItem(int fnRow) {
+                _trans.delDetail(fnRow);
+                loadDetail();
+                computeSummary();
+                txtSeeks01.requestFocus();
+            }
+
+            @Override
+            public void FormClosing() {
+                txtSeeks01.requestFocus();
+            }
+        };
     }
     
     private void initButton(){
@@ -661,23 +734,6 @@ public class POSController implements Initializable, ControlledScreen{
         txtField11.setOnKeyPressed(this::txtField_KeyPressed);
         txtField12.setOnKeyPressed(this::txtField_KeyPressed);
         txtField13.setOnKeyPressed(this::txtField_KeyPressed);
-        
-        _search_callback = new QuickSearchCallback() {
-            @Override
-            public void Result(TextField foField, JSONObject foValue) {
-                switch (foField.getId()){
-                    case "txtSeeks01":
-                        _trans.setDetail(_trans.getItemCount() - 1, "sStockIDx", (String) foValue.get("sStockIDx"));
-                        loadDetail();
-                        break;
-                }
-            }
-
-            @Override
-            public void FormClosing() {
-                txtSeeks01.requestFocus();
-            }
-        };
         
         txtField06.focusedProperty().addListener(txtField_Focus);
         txtField07.focusedProperty().addListener(txtField_Focus);

@@ -482,6 +482,7 @@ public class QuickSearchController implements Initializable, ControlledScreen {
                 break;
             case "btn12": //close screen
                 _screens_controller.unloadScreen(_screens_controller.getCurrentScreenIndex());
+                _search_callback.FormClosing();
                 break;
         }
     }
