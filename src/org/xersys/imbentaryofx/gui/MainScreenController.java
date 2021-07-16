@@ -90,6 +90,7 @@ public class MainScreenController implements Initializable {
         AnchorPaneMain.setOnKeyReleased(this::keyReleased);
         
         initScreen();
+        initButton();
     }    
     
     private void loadScreen(ScreenInfo.NAME  foValue){
@@ -116,6 +117,13 @@ public class MainScreenController implements Initializable {
         if (loJSON != null) _screens_dashboard_controller.loadScreen((String) loJSON.get("resource"), (ControlledScreen) CommonUtil.createInstance((String) loJSON.get("controller")));          
     }
     
+    private void initButton(){
+        btnOther01.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther02.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther03.setOnMouseClicked(this::cmdMouse_Click);
+        btnOther04.setOnMouseClicked(this::cmdMouse_Click);
+    }
+    
     private void cmdMouse_Click(MouseEvent event) {
         String lsButton = ((AnchorPane) event.getSource()).getId();
         System.out.println(this.getClass().getSimpleName() + " " + lsButton + " was clicked.");
@@ -131,6 +139,7 @@ public class MainScreenController implements Initializable {
                 loadScreen(ScreenInfo.NAME.JOB_ORDER);
                 break;
             case "btnOther04": //purchasing
+                loadScreen(ScreenInfo.NAME.PURCHASE_ORDER);
                 break;
             case "btnOther05": //wholesale
                 break;

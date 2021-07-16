@@ -29,7 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.xersys.benta.bo.Sales;
+import org.xersys.bili.bo.PurchaseOrder;
 import org.xersys.lib.dto.Temp_Transactions;
 import org.xersys.kumander.contants.SearchEnum;
 import org.xersys.imbentaryofx.gui.handler.ControlledScreen;
@@ -44,9 +44,9 @@ import org.xersys.kumander.util.MsgBox;
 import org.xersys.kumander.util.SQLUtil;
 import org.xersys.kumander.util.StringUtil;
 
-public class POSController implements Initializable, ControlledScreen{
+public class PurchaseOrderController implements Initializable, ControlledScreen{
     private XNautilus _nautilus;
-    private Sales _trans;
+    private PurchaseOrder _trans;
     private LMasDetTrans _listener;
     
     private MainScreenController _main_screen_controller;
@@ -121,25 +121,21 @@ public class POSController implements Initializable, ControlledScreen{
     @FXML
     private ComboBox cmbOrders;
     @FXML
-    private TextField txtField11;
-    @FXML
-    private TextField txtField12;
-    @FXML
-    private TextField txtField13;
-    @FXML
     private TextField txtField06;
     @FXML
     private TextField txtField07;
-    @FXML
-    private Label lblTranTotal;
-    @FXML
-    private Label lblTotalDisc;
     @FXML
     private Label lblPayable;
     @FXML
     private TableView _table;
     @FXML
-    private Label lblFreight;
+    private TextField txtField10;
+    @FXML
+    private TextField txtField05;
+    @FXML
+    private TextField txtField16;
+    @FXML
+    private TextField txtField08;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {        
@@ -157,9 +153,8 @@ public class POSController implements Initializable, ControlledScreen{
         initButton();
         initFields();
         initListener();
-
         
-        _trans = new Sales(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
+        _trans = new PurchaseOrder(_nautilus, (String) _nautilus.getSysConfig("sBranchCd"), false);
         _trans.setSaveToDisk(true);
         _trans.setListener(_listener);
         
@@ -216,6 +211,10 @@ public class POSController implements Initializable, ControlledScreen{
                     quickSearch(txtField, SearchEnum.Type.searchInvBranchComplex, lsValue, "sBarCodex", "", 15, false);
                     event.consume();
                     return;
+                case "txtField05":
+                case "txtField06":
+                case "txtField08":
+                case "txtField16":
             }
         }
         
@@ -235,13 +234,7 @@ public class POSController implements Initializable, ControlledScreen{
         txtSeeks01.setText("");
         txtField06.setText("");
         txtField07.setText("");
-        txtField11.setText("0.00");
-        txtField12.setText("0.00");
-        txtField13.setText("0.00");
-        
-        lblTranTotal.setText("0.00");
-        lblTotalDisc.setText("0.00");
-        lblFreight.setText("0.00");
+
         lblPayable.setText("0.00");
         
         //load temporary transactions
@@ -261,24 +254,17 @@ public class POSController implements Initializable, ControlledScreen{
     
     private void computeSummary(){
         double lnTranTotl = ((Number) _trans.getMaster("nTranTotl")).doubleValue();
-        double lnDiscount = ((Number) _trans.getMaster("nDiscount")).doubleValue();
-        double lnAddDiscx = ((Number) _trans.getMaster("nAddDiscx")).doubleValue();
-        double lnFreightx = ((Number) _trans.getMaster("nFreightx")).doubleValue();
-        double lnTotlDisc = lnTranTotl * lnDiscount + lnAddDiscx;
         
-        txtField11.setText(StringUtil.NumberFormat(lnDiscount, "#,##0.00"));
-        txtField12.setText(StringUtil.NumberFormat(lnAddDiscx, "#,##0.00"));
-        txtField13.setText(StringUtil.NumberFormat(lnFreightx, "#,##0.00"));
-        
-        lblTranTotal.setText(StringUtil.NumberFormat(lnTranTotl, "#,##0.00"));
-        lblTotalDisc.setText(StringUtil.NumberFormat(lnTotlDisc, "#,##0.00"));
-        lblFreight.setText(StringUtil.NumberFormat(lnFreightx, "#,##0.00"));
-        lblPayable.setText(StringUtil.NumberFormat(lnTranTotl - lnTotlDisc + lnFreightx, "#,##0.00"));
+        lblPayable.setText(StringUtil.NumberFormat(lnTranTotl, "#,##0.00"));
     }
     
     private void loadTransaction(){
-        txtField06.setText((String) _trans.getMaster("sRemarksx"));
-        txtField07.setText((String) _trans.getMaster("sSalesman"));
+        txtField05.setText("");
+        txtField06.setText("");
+        txtField07.setText((String) _trans.getMaster("sReferNox"));
+        txtField08.setText("");
+        txtField10.setText((String) _trans.getMaster("sRemarksx"));
+        txtField16.setText("");
         
         computeSummary();
         
@@ -292,17 +278,13 @@ public class POSController implements Initializable, ControlledScreen{
         _table_data.clear();
         
         double lnUnitPrce;
-        double lnDiscount;
-        double lnAddDiscx;
         double lnTranTotl;
         int lnQuantity;
         
         for(lnCtr = 0; lnCtr <= lnRow -1; lnCtr++){           
             lnQuantity = (int) _trans.getDetail(lnCtr, "nQuantity");
             lnUnitPrce = ((Number)_trans.getDetail(lnCtr, "nUnitPrce")).doubleValue();
-            lnDiscount = ((Number)_trans.getDetail(lnCtr, "nDiscount")).doubleValue();
-            lnAddDiscx = ((Number)_trans.getDetail(lnCtr, "nAddDiscx")).doubleValue();
-            lnTranTotl = (lnQuantity * (lnUnitPrce - (lnUnitPrce * lnDiscount))) - lnAddDiscx;
+            lnTranTotl = lnQuantity * lnUnitPrce;
             
             _table_data.add(new TableModel(String.valueOf(lnCtr + 1), 
                         (String) _trans.getDetail(lnCtr, 100),
@@ -311,9 +293,9 @@ public class POSController implements Initializable, ControlledScreen{
                         StringUtil.NumberFormat(lnUnitPrce, "#,##0.00"),
                         String.valueOf(_trans.getDetail(lnCtr, 103)),
                         String.valueOf(lnQuantity),
-                        StringUtil.NumberFormat(lnDiscount, "#,##0.00"),
-                        StringUtil.NumberFormat(lnAddDiscx, "#,##0.00"),
-                        StringUtil.NumberFormat(lnTranTotl, "#,##0.00")));
+                        StringUtil.NumberFormat(lnTranTotl, "#,##0.00"),
+                        "",
+                        ""));
         }
 
         if (!_table_data.isEmpty()){
@@ -337,8 +319,6 @@ public class POSController implements Initializable, ControlledScreen{
         TableColumn index06 = new TableColumn("");
         TableColumn index07 = new TableColumn("");
         TableColumn index08 = new TableColumn("");
-        TableColumn index09 = new TableColumn("");
-        TableColumn index10 = new TableColumn("");
         
         index01.setSortable(false); index01.setResizable(false);
         index02.setSortable(false); index02.setResizable(false);
@@ -348,8 +328,6 @@ public class POSController implements Initializable, ControlledScreen{
         index06.setSortable(false); index06.setResizable(true); index06.setStyle( "-fx-alignment: CENTER;");
         index07.setSortable(false); index07.setResizable(true); index07.setStyle( "-fx-alignment: CENTER;");
         index08.setSortable(false); index08.setResizable(true); index08.setStyle( "-fx-alignment: CENTER-RIGHT;");
-        index09.setSortable(false); index09.setResizable(true); index09.setStyle( "-fx-alignment: CENTER-RIGHT;");
-        index10.setSortable(false); index10.setResizable(true); index10.setStyle( "-fx-alignment: CENTER-RIGHT;");
         
         _table.getColumns().clear();        
         
@@ -381,17 +359,9 @@ public class POSController implements Initializable, ControlledScreen{
         index07.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index07"));
         index07.prefWidthProperty().set(60);
         
-        index08.setText("Disc."); 
+        index08.setText("Total"); 
         index08.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index08"));
-        index08.prefWidthProperty().set(60);
-        
-        index09.setText("Adtl."); 
-        index09.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index09"));
-        index09.prefWidthProperty().set(60);
-        
-        index10.setText("Total"); 
-        index10.setCellValueFactory(new PropertyValueFactory<TableModel,String>("index10"));
-        index10.prefWidthProperty().set(85);
+        index08.prefWidthProperty().set(85);
         
         _table.getColumns().add(index01);
         _table.getColumns().add(index02);
@@ -401,8 +371,6 @@ public class POSController implements Initializable, ControlledScreen{
         _table.getColumns().add(index06);
         _table.getColumns().add(index07);
         _table.getColumns().add(index08);
-        _table.getColumns().add(index09);
-        _table.getColumns().add(index10);
         
         _table.setItems(_table_data);
         _table.setOnMouseClicked(this::tableClicked);
@@ -729,17 +697,17 @@ public class POSController implements Initializable, ControlledScreen{
     
     private void initFields(){
         txtSeeks01.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField05.setOnKeyPressed(this::txtField_KeyPressed);
         txtField06.setOnKeyPressed(this::txtField_KeyPressed);
-        txtField07.setOnKeyPressed(this::txtField_KeyPressed);
-        txtField11.setOnKeyPressed(this::txtField_KeyPressed);
-        txtField12.setOnKeyPressed(this::txtField_KeyPressed);
-        txtField13.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField08.setOnKeyPressed(this::txtField_KeyPressed);
+        txtField16.setOnKeyPressed(this::txtField_KeyPressed);
         
+        txtField05.focusedProperty().addListener(txtField_Focus);
         txtField06.focusedProperty().addListener(txtField_Focus);
         txtField07.focusedProperty().addListener(txtField_Focus);
-        txtField11.focusedProperty().addListener(txtField_Focus);
-        txtField12.focusedProperty().addListener(txtField_Focus);
-        txtField13.focusedProperty().addListener(txtField_Focus);
+        txtField08.focusedProperty().addListener(txtField_Focus);
+        txtField10.focusedProperty().addListener(txtField_Focus);
+        txtField16.focusedProperty().addListener(txtField_Focus);
         
         cmbOrders.valueProperty().addListener(new ChangeListener() {
             @Override
@@ -759,23 +727,15 @@ public class POSController implements Initializable, ControlledScreen{
         if (lsValue == null) return;
         if(!nv){ //Lost Focus           
             switch (lnIndex){
-                case 6: //remarks
-                case 7: //salesman
+                case 6: //po number
+                case 10: //remarks
                     _trans.setMaster(lnIndex, lsValue);
                     break;
-                case 11: //discount rate
-                case 12: //additional discount
-                case 13: //freight charge                    
-                    double x = 0.00;
-                    try {
-                        //this mus be numeric else it will throw an error
-                        x = Double.parseDouble(lsValue);
-                    } catch (NumberFormatException e) {
-                        MsgBox.showOk("Input was not numeric.", "Warning");
-                        txtField.requestFocus(); 
-                        break;
-                    }
-                    _trans.setMaster(lnIndex, x);
+                case 5:
+                case 7:
+                case 8:
+                case 9:
+                case 16:
                     break;
                 default:
                     MsgBox.showOk("Text field with name " + txtField.getId() + " not registered.", "Warning");
